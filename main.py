@@ -19,11 +19,11 @@ import sqlite3
 from bs4 import BeautifulSoup
 import os
 import datetime
+from datetime import datetime
 from añadir_prod import VentanaAnadirProducto
-from conection import DatabaseManager # Importa la clase DatabaseManager desde el archivo database_manager.py
+from conection import DatabaseManager 
 from PyQt5.QtCore import Qt
-
-    
+   
 class VentanaVentasDiarias(QtWidgets.QDialog):
     def __init__(self):
         super(VentanaVentasDiarias, self).__init__()
@@ -48,12 +48,23 @@ class VentanaPrincipal(QtWidgets.QMainWindow):
     def __init__(self, db_manager):
         super(VentanaPrincipal, self).__init__()
         loadUi(r"qt\invUI.ui", self)
+        self.paginaInicia = True
         self.db_manager = db_manager  # Guarda una referencia al objeto db_manager
         self.mostrarPaginaProductos()  # Corregir aquí
+        self.mostrar_datos_productos()
         self.total_v_line.setReadOnly(True)  # Hacer que el QLineEdit sea de solo lectura
         self.total_bs_line.setReadOnly(True)  # Hacer que el QLineEdit sea de solo lectura
-        self.paginaInicia = True
-        self.mostrar_datos_productos()
+        self.table_prod_comprados = self.findChild(QtWidgets.QTableWidget, "table_prod_comprados")# Después de cargar la interfaz de usuario en el constructor
+        self.tasa_edit.textChanged.connect(self.actualizar_precios_bs)     
+        self.prod_name_edit.editingFinished.connect(self.actualizar_nombre) # Conectar señales y ranuras para manejar la entrada de texto en los line edits
+        self.id_prod_edit.editingFinished.connect(self.actualizar_id)   
+        self.insertar_gif_en_label() # Insertar GIF en el QLabel     
+        self.actualizar_hora_fecha() # Actualizar la hora y el día cada segundo
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.actualizar_hora_fecha)
+        self.timer.start(1000)
+        
+    def conectar_eventos(self)    
         self.add_btn.clicked.connect(self.abrir_ventana_anadir_producto)      
         self.inicio_btn.clicked.connect(self.mostrarPaginaInicio)
         self.Productos_btn.clicked.connect(self.mostrarPaginaProductos)
@@ -66,19 +77,11 @@ class VentanaPrincipal(QtWidgets.QMainWindow):
         self.clear_btn.clicked.connect(self.eliminar_fila)
         self.clear_f_btn.clicked.connect(self.eliminar_fila_v)
         self.clear_venta_btn.clicked.connect(self.eliminar_todas_las_filas)       
-        self.save_v_btn.clicked.connect(self.guardar_venta) # Conectar el botón save_v_btn a la función guardar_venta
         self.frame_controls.setVisible(True)  # Inicialmente, el frame está oculto       
         self.btn_menu.clicked.connect(self.toggle_frame_controls)
-        self.prod_name_edit.editingFinished.connect(self.actualizar_nombre) # Conectar señales y ranuras para manejar la entrada de texto en los line edits
-        self.id_prod_edit.editingFinished.connect(self.actualizar_id)   
         self.add_v_btn.clicked.connect(self.salida_producto)  # Conectar el botón "Agregar"
-        self.table_prod_comprados = self.findChild(QtWidgets.QTableWidget, "table_prod_comprados")# Después de cargar la interfaz de usuario en el constructor
-        self.tasa_edit.textChanged.connect(self.actualizar_precios_bs)
-        self.insertar_gif_en_label() # Insertar GIF en el QLabel     
-        self.actualizar_hora_fecha() # Actualizar la hora y el día cada segundo
-        self.timer = QTimer(self)
-        self.timer.timeout.connect(self.actualizar_hora_fecha)
-        self.timer.start(1000)
+        self.save_v_btn.clicked.connect(self.guardar_salida)# Conexión del botón al método para guardar la salida desde el QTableWidget
+        
         
     def actualizar_id(self):
     # Método para actualizar el ID del producto según el nombre ingresado
@@ -103,7 +106,6 @@ class VentanaPrincipal(QtWidgets.QMainWindow):
                 break
 
     def salida_producto(self):
-        # Generar un ID único de tres dígitos
         id_producto = self.id_prod_edit.text()
         nombre = self.prod_name_edit.text()
         cantidad = self.cant_prod.text()
@@ -124,7 +126,9 @@ class VentanaPrincipal(QtWidgets.QMainWindow):
             if int(cantidad) > cantidad_disponible:
                 QtWidgets.QMessageBox.warning(self, "Advertencia", "La cantidad ingresada es mayor que la cantidad disponible.")
                 return
-    
+        
+            
+        
             marca = producto[2]
             modelo = producto[3]
             precio_unitario = producto[5]
@@ -187,8 +191,41 @@ class VentanaPrincipal(QtWidgets.QMainWindow):
         else:
             QtWidgets.QMessageBox.warning(self, "Advertencia", "Producto no encontrado.")
     
-
+        try:
+            # Actualizar la cantidad del producto en la base de datos
+                nueva_cantidad = cantidad_disponible - int(cantidad)
+                self.db_manager.actualizar_cantidad_producto(nombre, nueva_cantidad)
+                print("Cantidad del producto actualizada correctamente en la base de datos.")
+        except Exception as e:
+                print("Error al actualizar la cantidad del producto:", e)
     
+    def guardar_salida(self):
+        num_filas = self.table_prod_comprados.rowCount()
+        
+        # Verificar si hay datos en el QTableWidget
+        if num_filas == 0:
+            QtWidgets.QMessageBox.warning(self, "Advertencia", "No hay productos en la lista para guardar la salida.")
+            return
+        
+        # Recorrer las filas del QTableWidget y obtener los datos
+        for fila in range(num_filas):
+            id_producto = self.table_prod_comprados.item(fila, 0).text()
+            precio_venta = float(self.table_prod_comprados.item(fila, 6).text())
+            precio_bs = float(self.table_prod_comprados.item(fila, 7).text())
+            
+            # Obtener la cantidad vendida desde un QLineEdit
+            cantidad_vendida = float(self.cantidad_vendida_edit.text())
+            
+            # Llamada al método insertar_salida con los argumentos necesarios, incluida cantidad_vendida
+            self.db_manager.insertar_salida(id_producto, precio_venta, precio_bs, cantidad_vendida)
+        
+        # Limpiar el QTableWidget después de guardar la salida
+        self.table_prod_comprados.setRowCount(0)
+        
+        # Limpiar los campos de total_v_line y total_bs_line
+        self.total_v_line.clear()
+        self.total_bs_line.clear()
+       
     def setup_ui(self):
         
         # Supongamos que self.table_prod_comprados es tu tabla donde deseas eliminar filas
@@ -270,20 +307,20 @@ class VentanaPrincipal(QtWidgets.QMainWindow):
             self.db_manager.actualizar_precio_bs(id_producto, precio_bs)
 
  # Configura la imagen en el QLabel
-        pixmap = QtGui.QPixmap(r"recursos\img\icons\smart.png")  # Cambia la ruta por la de tu imagen
+        pixmap = QtGui.QPixmap(r"recursos\img\smart.png")  # Cambia la ruta por la de tu imagen
         # Cambia el tamaño de la imagen
         scaled_pixmap = pixmap.scaled(200, 200)  # Cambia 200, 200 por el tamaño deseado
         self.img_label.setPixmap(pixmap)
 
         # Configura la imagen en el QLabel
-        pixmap = QtGui.QPixmap(r"recursos\img\icons\manual.png")  # Cambia la ruta por la de tu imagen
+        pixmap = QtGui.QPixmap(r"recursos\img\manual.png")  # Cambia la ruta por la de tu imagen
         # Cambia el tamaño de la imagen
         scaled_pixmap = pixmap.scaled(200, 200)  # Cambia 200, 200 por el tamaño deseado
         self.manual_label.setPixmap(pixmap)
 
     def insertar_gif_en_label(self):
         # Crear un objeto QMovie para el GIF
-        movie = QtGui.QMovie(r"recursos\img\icons\maxwell.gif")
+        movie = QtGui.QMovie(r"recursos\img\maxwell.gif")
 
         # Establecer el objeto QMovie en el QLabel
         self.gif_label.setMovie(movie)
@@ -399,31 +436,7 @@ class VentanaPrincipal(QtWidgets.QMainWindow):
     def eliminar_fila_base_datos(self, id_fila):
     # Eliminar la fila de la base de datos utilizando el método eliminar_producto
      self.db_manager.eliminar_producto(id_fila)  # Utilizando el ID recibido
-     
-    def guardar_venta(self):
-        try:
-            # Generar un nuevo ID único para la venta (suponiendo que ID_V es autoincremental)
-            nuevo_id_venta = self.db_manager.obtener_ultimo_id_venta() + 1
-    
-            # Obtener el total de la venta y la hora actual
-            total_venta = self.total_v_line.text()
-            total_bs = self.total_bs_line.text()
-            hora_actual = QDateTime.currentDateTime().toString("yyyy-MM-dd HH:mm:ss")
-    
-            # Insertar los datos de la venta en la tabla ventas_v
-            self.db_manager.insertar_venta(nuevo_id_venta, hora_actual, total_venta, total_bs)
-    
-            # Limpiar la tabla de productos comprados y los campos de total
-            self.table_prod_comprados.clearContents()
-            self.table_prod_comprados.setRowCount(0)
-            self.total_v_line.clear()
-            self.total_bs_line.clear()
-    
-            print("Venta guardada correctamente.")
-        except Exception as e:
-            print("Error al insertar venta:", e)
-     
-     
+          
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     app.setApplicationName("inventario")
