@@ -1,11 +1,14 @@
 import sqlite3
 import datetime
+import os
 
 
 class DatabaseManager:
-    def __init__(self, database_file):
-        self.database_file = database_file
-        self.connection = sqlite3.connect(database_file)
+    def __init__(self, db_path):
+        self.db_path = db_path
+        self.connection = sqlite3.connect(db_path)
+        self.cursor = self.connection.cursor()
+        self.database_file = os.path.basename(db_path)
         self.cursor = self.connection.cursor()
     
         
@@ -75,21 +78,26 @@ class DatabaseManager:
 
     def restar_cantidad_producto(self, id_producto, cantidad_vendida):
         try:
-            # Obtener la cantidad actual disponible del producto
-            self.cursor.execute("SELECT cantidad FROM productos WHERE ID_P = ?", (id_producto,))
-            cantidad_disponible = self.cursor.fetchone()[0]
-            
-            # Restar la cantidad vendida de la cantidad disponible
+            # Obtener la cantidad disponible del producto
+            self.cursor.execute("SELECT cantidad FROM productos WHERE id = ?", (id_producto,))
+            resultado = self.cursor.fetchone()
+            if resultado is None:
+                print(f"No se encontró ningún producto con el ID {id_producto}.")
+                return
+    
+            cantidad_disponible = resultado[0]
+    
+            # Calcular la nueva cantidad después de la venta
             nueva_cantidad = cantidad_disponible - cantidad_vendida
-            
-            # Actualizar la cantidad disponible en la tabla de productos
-            self.cursor.execute("UPDATE productos SET cantidad = ? WHERE ID_P = ?", (nueva_cantidad, id_producto))
+    
+            # Actualizar la cantidad en la tabla de productos
+            self.cursor.execute("UPDATE productos SET cantidad = ? WHERE id = ?", (nueva_cantidad, id_producto))
             self.connection.commit()
-            print("Cantidad de productos actualizada correctamente.")
+            print("Cantidad actualizada correctamente.")
         except sqlite3.Error as e:
-            print("Error al restar cantidad de productos:", e)      
+            print("Error al restar cantidad de producto:", e)   
 
-    def insertar_salida(self, id_producto, precio_venta, precio_bs):
+    def insertar_salida(self, id_producto, precio_venta, precio_bs, cantidad_vendida):
             try:
                 # Obtener la fecha y hora actual
                 fecha_actual = datetime.date.today()
@@ -124,7 +132,23 @@ class DatabaseManager:
             self.connection.commit()  # Confirmar la transacción
             print("Cantidad del producto actualizada correctamente.")
         except sqlite3.Error as e:
-            print("Error al actualizar la cantidad del producto:", e)       
+            print("Error al actualizar la cantidad del producto:", e)    
+            
+    def insertar_usuario(self, nombre, contraseña):
+        try:
+            # Insertar los datos en la tabla 'user'
+            self.cursor.execute("INSERT INTO user (nombre, contraseña) VALUES (?, ?)", (nombre, contraseña))
+            # Confirmar la transacción
+            self.connection.commit()
+            print("Usuario registrado exitosamente.")
+        except sqlite3.Error as e:
+            print("Error al insertar usuario:", e)
+# Uso:
+# Crear una instancia del DatabaseManager
+db_manager = DatabaseManager(r"recursos/bd/db.db")
+
+
+     
             
   
             

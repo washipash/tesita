@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1116</width>
-    <height>622</height>
+    <width>1103</width>
+    <height>633</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -55,11 +55,28 @@ background-color: rgb(0, 145, 217);
       <property name="frameShadow">
        <enum>QFrame::Raised</enum>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout_2" stretch="1,8">
+      <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,0">
+       <property name="spacing">
+        <number>0</number>
+       </property>
+       <property name="leftMargin">
+        <number>1</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
        <item>
         <widget class="QFrame" name="frame_sup">
          <property name="styleSheet">
-          <string notr="true">
+          <string notr="true">QFrame{
+	background-color: rgb(60, 121, 181);
+}
 QLineEdit{
 
 border: 0px;
@@ -75,7 +92,22 @@ font:75 12pt &quot;Times New Roman&quot; ;
          <property name="frameShadow">
           <enum>QFrame::Raised</enum>
          </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_31">
+         <layout class="QHBoxLayout" name="horizontalLayout_31" stretch="0">
+          <property name="spacing">
+           <number>9</number>
+          </property>
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>6</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>9</number>
+          </property>
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_28">
             <item>
@@ -88,7 +120,7 @@ font:75 12pt &quot;Times New Roman&quot; ;
               </property>
               <property name="sizeHint" stdset="0">
                <size>
-                <width>40</width>
+                <width>50</width>
                 <height>20</height>
                </size>
               </property>
@@ -102,12 +134,15 @@ font:75 12pt &quot;Times New Roman&quot; ;
                 <height>0</height>
                </size>
               </property>
+              <property name="styleSheet">
+               <string notr="true"> background-color:rgb(85, 255, 255)</string>
+              </property>
               <property name="text">
                <string/>
               </property>
               <property name="icon">
                <iconset>
-                <normaloff>../recursos/img/icons/menu2.png</normaloff>../recursos/img/icons/menu2.png</iconset>
+                <normaloff>../recursos/img/menu2.png</normaloff>../recursos/img/menu2.png</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -251,6 +286,9 @@ border: 0px solid #14C80C;
           <enum>QFrame::Raised</enum>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <property name="leftMargin">
+           <number>2</number>
+          </property>
           <item>
            <widget class="QFrame" name="frame_controls">
             <property name="minimumSize">
@@ -267,7 +305,7 @@ border: 0px solid #14C80C;
             </property>
             <property name="styleSheet">
              <string notr="true">QFrame{
- background-color: rgb(0, 206, 151); 
+ background-color:rgb(70, 209, 209)
 
 
 }
@@ -310,7 +348,7 @@ font: 77 10pt &quot;Arial Black&quot;;
                  </property>
                  <property name="icon">
                   <iconset>
-                   <normaloff>../recursos/img/icons/inicio.png</normaloff>../recursos/img/icons/inicio.png</iconset>
+                   <normaloff>../recursos/img/inicio.png</normaloff>../recursos/img/inicio.png</iconset>
                  </property>
                 </widget>
                </item>
@@ -340,7 +378,7 @@ font: 77 10pt &quot;Arial Black&quot;;
                  </property>
                  <property name="icon">
                   <iconset>
-                   <normaloff>../recursos/img/icons/caja.png</normaloff>../recursos/img/icons/caja.png</iconset>
+                   <normaloff>../recursos/img/caja.png</normaloff>../recursos/img/caja.png</iconset>
                  </property>
                 </widget>
                </item>
@@ -370,7 +408,7 @@ font: 77 10pt &quot;Arial Black&quot;;
                  </property>
                  <property name="icon">
                   <iconset>
-                   <normaloff>../recursos/img/icons/venta.png</normaloff>../recursos/img/icons/venta.png</iconset>
+                   <normaloff>../recursos/img/venta.png</normaloff>../recursos/img/venta.png</iconset>
                  </property>
                 </widget>
                </item>
@@ -400,7 +438,7 @@ font: 77 10pt &quot;Arial Black&quot;;
                  </property>
                  <property name="icon">
                   <iconset>
-                   <normaloff>../recursos/img/icons/libro.png</normaloff>../recursos/img/icons/libro.png</iconset>
+                   <normaloff>../recursos/img/libro.png</normaloff>../recursos/img/libro.png</iconset>
                  </property>
                 </widget>
                </item>
@@ -430,7 +468,7 @@ font: 77 10pt &quot;Arial Black&quot;;
                  </property>
                  <property name="icon">
                   <iconset>
-                   <normaloff>../recursos/img/icons/soporte.png</normaloff>../recursos/img/icons/soporte.png</iconset>
+                   <normaloff>../recursos/img/soporte.png</normaloff>../recursos/img/soporte.png</iconset>
                  </property>
                 </widget>
                </item>
@@ -597,7 +635,7 @@ font:75 12pt &quot;Times New Roman&quot; ;
                 </size>
                </property>
                <property name="currentIndex">
-                <number>1</number>
+                <number>2</number>
                </property>
                <widget class="QWidget" name="page_inicio">
                 <layout class="QVBoxLayout" name="verticalLayout_23">
@@ -619,6 +657,9 @@ font:75 12pt &quot;Times New Roman&quot; ;
                       <spacer name="verticalSpacer_13">
                        <property name="orientation">
                         <enum>Qt::Vertical</enum>
+                       </property>
+                       <property name="sizeType">
+                        <enum>QSizePolicy::Fixed</enum>
                        </property>
                        <property name="sizeHint" stdset="0">
                         <size>
@@ -644,21 +685,24 @@ font:75 12pt &quot;Times New Roman&quot; ;
                         </spacer>
                        </item>
                        <item>
-                        <widget class="QLabel" name="gif_label">
+                        <widget class="QLabel" name="img_label">
                          <property name="minimumSize">
                           <size>
-                           <width>480</width>
-                           <height>270</height>
+                           <width>500</width>
+                           <height>400</height>
                           </size>
                          </property>
                          <property name="maximumSize">
                           <size>
                            <width>480</width>
-                           <height>270</height>
+                           <height>500</height>
                           </size>
                          </property>
                          <property name="text">
                           <string/>
+                         </property>
+                         <property name="pixmap">
+                          <pixmap>../recursos/img/smart.png</pixmap>
                          </property>
                          <property name="alignment">
                           <set>Qt::AlignCenter</set>
@@ -723,7 +767,7 @@ font:75 12pt &quot;Times New Roman&quot; ;
                         </spacer>
                        </item>
                        <item>
-                        <widget class="QLabel" name="img_label">
+                        <widget class="QLabel" name="gif_label">
                          <property name="minimumSize">
                           <size>
                            <width>0</width>
@@ -799,6 +843,22 @@ font:75 12pt &quot;Times New Roman&quot; ;
                  <item>
                   <layout class="QHBoxLayout" name="horizontalLayout_20">
                    <item>
+                    <spacer name="horizontalSpacer_33">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeType">
+                      <enum>QSizePolicy::Fixed</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>40</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                   <item>
                     <widget class="QLabel" name="label_28">
                      <property name="text">
                       <string>POR FAVOR SELECCIONE UNA OPCION DEL MENU LATERAL</string>
@@ -837,7 +897,20 @@ font:75 12pt &quot;Times New Roman&quot; ;
                  <item>
                   <layout class="QHBoxLayout" name="horizontalLayout_13">
                    <item>
-                    <widget class="QPushButton" name="act_name">
+                    <spacer name="horizontalSpacer_3">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>40</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="act_name_btn">
                      <property name="minimumSize">
                       <size>
                        <width>120</width>
@@ -863,7 +936,7 @@ font:75 12pt &quot;Times New Roman&quot; ;
                     </spacer>
                    </item>
                    <item>
-                    <widget class="QPushButton" name="act_modelo">
+                    <widget class="QPushButton" name="act_modelo_btn">
                      <property name="minimumSize">
                       <size>
                        <width>120</width>
@@ -889,7 +962,7 @@ font:75 12pt &quot;Times New Roman&quot; ;
                     </spacer>
                    </item>
                    <item>
-                    <widget class="QPushButton" name="act_marca">
+                    <widget class="QPushButton" name="act_marca_btn">
                      <property name="minimumSize">
                       <size>
                        <width>120</width>
@@ -913,63 +986,6 @@ font:75 12pt &quot;Times New Roman&quot; ;
                       </size>
                      </property>
                     </spacer>
-                   </item>
-                   <item>
-                    <widget class="QLabel" name="label_19">
-                     <property name="text">
-                      <string>NOMBRE DEL PRODUCTO</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QLineEdit" name="buscar_prod_line">
-                     <property name="minimumSize">
-                      <size>
-                       <width>100</width>
-                       <height>0</height>
-                      </size>
-                     </property>
-                     <property name="maximumSize">
-                      <size>
-                       <width>200</width>
-                       <height>16777215</height>
-                      </size>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <spacer name="horizontalSpacer_3">
-                     <property name="orientation">
-                      <enum>Qt::Horizontal</enum>
-                     </property>
-                     <property name="sizeHint" stdset="0">
-                      <size>
-                       <width>40</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                    </spacer>
-                   </item>
-                   <item>
-                    <widget class="QPushButton" name="buscar_btn">
-                     <property name="minimumSize">
-                      <size>
-                       <width>120</width>
-                       <height>30</height>
-                      </size>
-                     </property>
-                     <property name="styleSheet">
-                      <string notr="true">QPushButton:hover{
-	background-color: rgb(85, 255, 255);
-color: rgb(0, 0, 0);
-font: 77 10pt &quot;Arial Black&quot;;
-}
-</string>
-                     </property>
-                     <property name="text">
-                      <string>BUSCAR</string>
-                     </property>
-                    </widget>
                    </item>
                   </layout>
                  </item>
@@ -1032,6 +1048,32 @@ font: 77 10pt &quot;Arial Black&quot;;
                      </property>
                      <property name="text">
                       <string>ELIMINAR</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer name="horizontalSpacer_34">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>40</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="edit_p_btn">
+                     <property name="minimumSize">
+                      <size>
+                       <width>120</width>
+                       <height>30</height>
+                      </size>
+                     </property>
+                     <property name="text">
+                      <string>EDITAR</string>
                      </property>
                     </widget>
                    </item>
@@ -1216,19 +1258,31 @@ font: 77 10pt &quot;Arial Black&quot;;
                      </item>
                      <item>
                       <widget class="QTableWidget" name="table_prod_comprados">
+                       <property name="sizePolicy">
+                        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                         <horstretch>0</horstretch>
+                         <verstretch>0</verstretch>
+                        </sizepolicy>
+                       </property>
                        <property name="minimumSize">
                         <size>
-                         <width>800</width>
+                         <width>900</width>
                          <height>0</height>
                         </size>
                        </property>
                        <property name="maximumSize">
                         <size>
-                         <width>1200</width>
+                         <width>16777215</width>
                          <height>500</height>
                         </size>
                        </property>
                        <property name="sizeIncrement">
+                        <size>
+                         <width>0</width>
+                         <height>0</height>
+                        </size>
+                       </property>
+                       <property name="baseSize">
                         <size>
                          <width>0</width>
                          <height>0</height>
@@ -1336,19 +1390,6 @@ font: 77 10pt &quot;Arial Black&quot;;
                       </widget>
                      </item>
                     </layout>
-                   </item>
-                   <item>
-                    <spacer name="horizontalSpacer_20">
-                     <property name="orientation">
-                      <enum>Qt::Horizontal</enum>
-                     </property>
-                     <property name="sizeHint" stdset="0">
-                      <size>
-                       <width>40</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                    </spacer>
                    </item>
                    <item>
                     <layout class="QHBoxLayout" name="horizontalLayout_34">
@@ -2167,6 +2208,32 @@ font: 77 10pt &quot;Arial Black&quot;;
                     </widget>
                    </item>
                    <item>
+                    <spacer name="horizontalSpacer_20">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>40</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="pushButton_2">
+                     <property name="minimumSize">
+                      <size>
+                       <width>120</width>
+                       <height>30</height>
+                      </size>
+                     </property>
+                     <property name="text">
+                      <string>BUSCAR</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
                     <spacer name="horizontalSpacer_12">
                      <property name="orientation">
                       <enum>Qt::Horizontal</enum>
@@ -2264,6 +2331,9 @@ font: 77 10pt &quot;Arial Black&quot;;
                          </property>
                          <property name="text">
                           <string/>
+                         </property>
+                         <property name="pixmap">
+                          <pixmap>../recursos/img/manual.png</pixmap>
                          </property>
                         </widget>
                        </item>

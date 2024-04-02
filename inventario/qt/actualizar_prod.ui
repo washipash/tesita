@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>UP_PROD</class>
- <widget class="QDialog" name="UP_PROD">
+ <class>actualizar_prod</class>
+ <widget class="QDialog" name="actualizar_prod">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -100,46 +100,6 @@ font: 77 10pt &quot;Arial Black&quot;;
        </widget>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_7">
-        <item>
-         <widget class="QLabel" name="label_3">
-          <property name="text">
-           <string>NOMBRE DEL PRODUCTO</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLineEdit" name="line_edit_buscar"/>
-        </item>
-        <item>
-         <spacer name="horizontalSpacer_3">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <widget class="QPushButton" name="btn_edit_buscar">
-          <property name="minimumSize">
-           <size>
-            <width>100</width>
-            <height>30</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>BUSCAR</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
          <spacer name="verticalSpacer_4">
@@ -189,20 +149,6 @@ font: 77 10pt &quot;Arial Black&quot;;
              <layout class="QHBoxLayout" name="horizontalLayout_3"/>
             </item>
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_4">
-              <item>
-               <widget class="QLabel" name="label_marca_insert_2">
-                <property name="text">
-                 <string>MARCA</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="line_edit_marca"/>
-              </item>
-             </layout>
-            </item>
-            <item>
              <layout class="QHBoxLayout" name="horizontalLayout_5">
               <item>
                <widget class="QLabel" name="label_modelo_insert_2">
@@ -213,6 +159,20 @@ font: 77 10pt &quot;Arial Black&quot;;
               </item>
               <item>
                <widget class="QLineEdit" name="line_edit_modelo"/>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_4">
+              <item>
+               <widget class="QLabel" name="label_marca_insert_2">
+                <property name="text">
+                 <string>MARCA</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="line_edit_marca"/>
               </item>
              </layout>
             </item>

@@ -174,7 +174,7 @@ border:1px solid rgb(0, 206, 151);
          <widget class="QTableWidget" name="table_day_ventas">
           <column>
            <property name="text">
-            <string>CI</string>
+            <string>N° VENTA</string>
            </property>
            <property name="font">
             <font>
@@ -196,17 +196,6 @@ border:1px solid rgb(0, 206, 151);
           </column>
           <column>
            <property name="text">
-            <string>MONTO Bs</string>
-           </property>
-           <property name="font">
-            <font>
-             <weight>75</weight>
-             <bold>true</bold>
-            </font>
-           </property>
-          </column>
-          <column>
-           <property name="text">
             <string>MONTO $$$</string>
            </property>
            <property name="font">
@@ -218,7 +207,13 @@ border:1px solid rgb(0, 206, 151);
           </column>
           <column>
            <property name="text">
-            <string/>
+            <string>MONTO Bs</string>
+           </property>
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
            </property>
           </column>
          </widget>
