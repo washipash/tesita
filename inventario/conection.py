@@ -22,7 +22,6 @@ class DatabaseManager:
         self.connection = sqlite3.connect(db_path)
         self.cursor = self.connection.cursor()
         self.database_file = os.path.basename(db_path)
-        self.cursor = self.connection.cursor()
     
         
     def insertar_producto(self, nombre, marca, modelo, cantidad, precio_unitario):
@@ -36,10 +35,14 @@ class DatabaseManager:
             print("Error al insertar producto:", e)
 
     def obtener_productos(self):
-        # Ejecutar una consulta para obtener todos los datos de la tabla productos
-        self.cursor.execute("SELECT * FROM productos")
-        productos = self.cursor.fetchall()
-        return productos
+            try:
+                # Ejecutar una consulta para obtener todos los datos de la tabla productos
+                self.cursor.execute("SELECT * FROM productos")
+                productos = self.cursor.fetchall()
+                return productos
+            except sqlite3.Error as e:
+                print("Error al obtener productos:", e)
+                return None
 
     def eliminar_producto(self, ID_P):
         try:
@@ -141,31 +144,38 @@ class DatabaseManager:
         except sqlite3.Error as e:
             print("Error al actualizar la cantidad del producto:", e)    
             
-    def insertar_usuario(self, nombre, contraseña, tipo):
+    def insertar_usuario(self, nombre, password, repetir_contraseña, tipo):
         try:
-             # Verificar el tipo seleccionado y asignar el valor correspondiente
-            tipo_usuario = "administrador" if tipo == "administrador" else "normal"
+            # Verificar si las contraseñas coinciden
+            if password != repetir_contraseña:
+                print("Las contraseñas no coinciden.")
+                return False
+
+            # Verificar el tipo seleccionado y asignar el valor correspondiente
+            tipo = "administrador" if tipo == "administrador" else "normal"
             # Insertar los datos en la tabla 'user'
-            self.cursor.execute("INSERT INTO user (nombre, contraseña, tipo) VALUES (?, ?, ?)", (nombre, contraseña, tipo))
+            self.cursor.execute("INSERT INTO user (nombre, password, tipo) VALUES (?, ?, ?)", (nombre, password, tipo))
             # Confirmar la transacción
             self.connection.commit()
             print("Usuario registrado exitosamente.")
+            return True
         except sqlite3.Error as e:
             print("Error al insertar usuario:", e)
+            return False
     
-    def cargar_datos(self, nombre, contraseña):
+    def cargar_datos(self, nombre, password):
         try:
             # Ejecutar una consulta para verificar las credenciales del usuario
-            self.cursor.execute("SELECT * FROM user WHERE nombre = ? AND contraseña = ?", (nombre, contraseña))
+            self.cursor.execute("SELECT * FROM user WHERE nombre = ? AND password = ?", (nombre, password))
             usuario = self.cursor.fetchone()
-
+    
             if usuario:
-                # Si se encuentra un usuario con las credenciales proporcionadas, retornar True
-                return True
+                # Si se encuentra un usuario con las credenciales proporcionadas, retornar los datos del usuario
+                return usuario
             else:
-                # Si no se encuentra ningún usuario con las credenciales proporcionadas, retornar False
-                return False
+                # Si no se encuentra ningún usuario con las credenciales proporcionadas, retornar None
+                return None
         except sqlite3.Error as e:
             # Manejar cualquier error de la base de datos
             print("Error al autenticar usuario:", e)
-            return False
+            return None

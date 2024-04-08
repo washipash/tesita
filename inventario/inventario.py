@@ -5,15 +5,13 @@ from main import IngresoUsuario, Registro, VentanaPrincipal
 from conection import DatabaseManager  # Importa la clase DatabaseManager desde tu archivo de conexión
 
 if __name__ == "__main__":
-    app = QApplication(sys.argv)
+    app = QApplication([])
 
     # Crear una instancia de DatabaseManager y conectar a la base de datos
     db_manager = DatabaseManager(r"recursos\bd\db.db")
 
-    # Crear una instancia de la ventana de registro, pasando db_manager como argumento
+    # Crear una instancia de la ventana de registro y la ventana de inicio de sesión
     ventana_registro = Registro(db_manager)
-
-    # Crear una instancia de la ventana de inicio de sesión, pasando la ventana de registro como argumento
     ventana_ingreso = IngresoUsuario(db_manager)
 
     # Conectar la señal 'usuario_registrado' de la ventana de registro con el método 'abrir_ingreso' de la ventana de inicio de sesión

@@ -26,16 +26,51 @@ from datetime import datetime
 from añadir_prod import VentanaAnadirProducto
 from conection import DatabaseManager 
 
+class Authenticator:
+    def __init__(self, db_path):
+        self.db_path = db_path
+
+    def cargar_datos(self, nombre, password):
+        try:
+            conexion = sqlite3.connect(self.db_path)
+            cursor = conexion.cursor()
+            cursor.execute("SELECT * FROM Users WHERE Username = ?", (nombre,))
+            usuario = cursor.fetchone()
+            conexion.close()
+
+            if usuario:
+                stored_password_hash = usuario[1]  # Suponiendo que el hash se almacena en el segundo campo de la tabla
+                if self.verify_password(password, stored_password_hash):
+                    return usuario  # Devolver los datos del usuario si la autenticación es exitosa
+                else:
+                    return False  # Devolver False si la contraseña es incorrecta
+            else:
+                return False  # Devolver False si el usuario no existe
+        except sqlite3.Error as e:
+            raise RuntimeError("Error al autenticar usuario:", e)
+
+    def verify_password(self, password, stored_password_hash):
+        # Verificar la contraseña comparando el hash almacenado con el hash de la contraseña proporcionada
+        hashed_password = self.hash_password(password)
+        return hashed_password == stored_password_hash
+
+    def hash_password(self, password):
+        # Cifrar la contraseña usando un algoritmo de hash (SHA-256 en este caso)
+        salt = b'sal_y_pepper'  # Sal para mejorar la seguridad del hash
+        password_bytes = password.encode('utf-8')
+        hashed_password = hashlib.pbkdf2_hmac('sha256', password_bytes, salt, 100000)
+        return hashed_password.hex()
 
 class IngresoUsuario(QDialog):
     usuario_registrado = pyqtSignal()
     autenticacion_exitosa = pyqtSignal()
+    
     def __init__(self, db_manager):
         self.db_manager = db_manager
         super(IngresoUsuario, self).__init__()
         loadUi(r"qt\login.ui", self)
         self.setWindowTitle("Login")
-        self.user_btn.clicked.connect(self.autenticar_usuario)
+        self.user_btn.clicked.connect(self.autenticar_usuario)  # Conectar el botón de inicio de sesión a la función de autenticación
         self.close_btn.clicked.connect(self.salida)
         self.register_btn.clicked.connect(self.abrir_registro)
         self.pass_edit.setEchoMode(QtWidgets.QLineEdit.Password)
@@ -65,48 +100,53 @@ class IngresoUsuario(QDialog):
         if reply == QMessageBox.Yes:
             QApplication.quit()
     
-    def guardar_datos_acceso(self, nombre, contrasena):
-        datos_acceso = {"nombre": nombre, "contrasena": contrasena}
+    def guardar_datos_acceso(self, nombre, password, tipo):
+        datos_acceso = {"nombre": nombre, "password": password, "tipo": tipo}
         with open("datos_acceso.json", "w") as archivo:
-            json.dump(datos_acceso, archivo)   
-    
+            json.dump(datos_acceso, archivo)  
+            
     def cargar_datos_acceso(self):
         try:
             with open("datos_acceso.json", "r") as archivo:
                 datos_acceso = json.load(archivo)
-                return datos_acceso["nombre"], datos_acceso["contrasena"]
+                return datos_acceso["nombre"], datos_acceso["password"]  # Corregir para que coincida con la clave en el archivo JSON
         except FileNotFoundError:
-            return None, None
-    
-    def cifrar_contrasenia(self, contrasena):
+            return None, None         
+            
+    def cifrar_contrasenia(self, password):
+        # Cifrar la contraseña usando un algoritmo de hash (SHA-256 en este caso)
         cifrado = hashlib.sha256()
-        cifrado.update(contrasena.encode('utf-8'))
-        return cifrado.hexdigest()                 
+        cifrado.update(password.encode('utf-8'))
+        return cifrado.hexdigest()        
+    
 
     def autenticar_usuario(self):
         nombre = self.name_edit.text()
-        contrasena = self.pass_edit.text()
-        contrasena_cifrada = self.cifrar_contrasenia(contrasena)
+        password = self.pass_edit.text()
 
-        if self.db_manager.cargar_datos(nombre, contrasena):
-            self.abrir_ventana_principal(nombre)
+        if not nombre or not password:
+            QMessageBox.warning(self, "Error", "Por favor ingrese usuario y contraseña.")
+            return
+    
+        usuario = self.db_manager.cargar_datos(nombre, password)  # Obtener los datos del usuario
+
+        if usuario:  # Verificar si la autenticación fue exitosa
+            ID_U = usuario[1]  # Suponiendo que el ID del usuario se encuentra en el primer campo
+            self.open_menu_principal(ID_U)
         else:
             QMessageBox.warning(self, "Error", "Nombre de usuario o contraseña incorrectos.")
 
-    def abrir_ventana_principal(self, nombre):
-        self.close()   
-        # Crear una instancia de la ventana principal
-        ventana_principal = VentanaPrincipal(nombre)
-
-        # Mostrar la ventana principal
-        ventana_principal.showMaximized()  # Mostrar la ventana en pantalla completa
-                   
+    def open_menu_principal(self,  ID_U):
+        ventana_principal = VentanaPrincipal(ID_U)
+        ventana_principal.setWindowTitle("Menu Principal")
+        ventana_principal.show()
+        ventana_principal.showMaximized()
+        self.close()
+          
     
     def ingreso(self):
-        nombre = self.name_edit.text()
-        contraseña = self.pass_edit.text()
-        self.authenticate_user(nombre, contraseña)
-        self.cargar_datos_acceso(nombre, contraseña)
+        self.autenticar_usuario()  # Llama al método sin argumentos
+        # No es necesario guardar los datos de acceso aquí, ya que se guardan cuando se registra un nuevo usuario
     
 
     def abrir_registro(self):
@@ -116,7 +156,7 @@ class IngresoUsuario(QDialog):
         # Abrir la ventana de registro
         ventana_registro = Registro(self.db_manager)
         ventana_registro.usuario_registrado.connect(self.abrir_ingreso)
-        ventana_registro.exec_()  
+        ventana_registro.exec_()    
 
 
 class Registro(QDialog):
@@ -153,17 +193,17 @@ class Registro(QDialog):
 
     def registrarUsuario(self):
         nombre = self.name_user_line.text()
-        contraseña = self.pass_user_line.text()
+        password = self.pass_user_line.text()
         tipo = self.tp_u_cbx.currentText()  # Obtener el tipo seleccionado del ComboBox
-        self.db_manager.insertar_usuario(nombre, contraseña, tipo)
+        self.db_manager.insertar_usuario(nombre, password, tipo)
         repetir_contraseña = self.rep_pass_user_line.text()
 
 
-        if not nombre or not contraseña or not repetir_contraseña:
+        if not nombre or not password or not repetir_contraseña:
             QMessageBox.critical(self, "Error", "Por favor, complete todos los campos.")
             return
 
-        if contraseña != repetir_contraseña:
+        if password != repetir_contraseña:
             QMessageBox.warning(self, "Error", "Las contraseñas no coinciden.")
             return
 
@@ -173,13 +213,19 @@ class Registro(QDialog):
         # Cerrar la ventana de registro
         self.close()
     
-    def guardar_datos_acceso(self, usuario, tipo=None):
-     with open("datos_acceso.json", "w") as archivo:
-        json.dump({"usuario": usuario, "tipo": tipo}, archivo)
     
-    def usuario_existe(self, username):
-        # Implementa la lógica para verificar si el usuario ya existe en la base de datos
-        return False  # Cambia esto con la lógica real de tu aplicación 
+    def usuario_existe(self, nombre):
+        # Conectar a la base de datos
+        conexion = sqlite3.connect(r"recursos\bd\db.db")
+        # Crear un cursor
+        cursor = conexion.cursor()
+        # Consultar si el usuario ya existe
+        cursor.execute('SELECT COUNT(*) FROM Users WHERE nombre = ?', (nombre,))
+        resultado = cursor.fetchone()[0]
+        # Cerrar la conexión
+        conexion.close()
+        # Si resultado es mayor que 0, significa que el usuario ya existe
+        return resultado > 0
 
 class VentanaVentasDiarias(QtWidgets.QDialog):
     def __init__(self):
@@ -208,7 +254,6 @@ class VentanaPrincipal(QtWidgets.QMainWindow):
         self.setWindowTitle('Inventario SmartTech Store')  
         self.paginaInicia = True
         self.db_manager = db_manager  # Guarda una referencia al objeto db_manager
-        self.mostrarPaginaProductos()  # Corregir aquí
         self.mostrar_datos_productos()
         self.total_v_line.setReadOnly(True)  # Hacer que el QLineEdit sea de solo lectura
         self.total_bs_line.setReadOnly(True)  # Hacer que el QLineEdit sea de solo lectura
@@ -222,7 +267,8 @@ class VentanaPrincipal(QtWidgets.QMainWindow):
         self.inicio_btn.clicked.connect(self.mostrarPaginaInicio)
         self.Productos_btn.clicked.connect(self.mostrarPaginaProductos)
         self.ventas_btn.clicked.connect(self.mostrarPaginaVentas)
-        self.reparacion_btn.clicked.connect(self.mostrarPaginaReparaciones)
+        self.close_btn.clicked.connect(self.salida)
+        self.close_s_btn.clicked.connect(self.abrir_login)
         self.ayuda_btn.clicked.connect(self.mostrarPaginaayuda)
         self.buscar_venta_btn.clicked.connect(self.abrir_buscar_ventas)
         self.delete_btn.clicked.connect(self.abrir_eliminar_venta)
@@ -238,6 +284,40 @@ class VentanaPrincipal(QtWidgets.QMainWindow):
         self.act_marca_btn.clicked.connect(self.ordenar_por_marca)        
         self.act_modelo_btn.clicked.connect(self.ordenar_por_modelo)
         self.edit_p_btn.clicked.connect(self.abrir_ventana_editar_producto)
+        
+    def abrir_login(self):
+        # Cerrar la ventana actual
+        self.close()
+        # Mostrar la ventana de inicio de sesión
+        ventana_ingreso = IngresoUsuario(self.db_manager)
+        ventana_ingreso.usuario_registrado.connect(self.abrir_login)
+        ventana_ingreso.show()
+        ventana_ingreso.exec_()    
+        
+    def mostrarPaginaProductos(self):
+        # Llamar a la función para mostrar los datos de los productos
+        self.mostrar_datos_productos()
+        self.stackedWidget.setCurrentWidget(self.page_productos)
+
+    def actualizar_datos_tabla(self):
+        self.mostrar_datos_productos()
+
+
+    def mostrar_datos_productos(self):
+        try:
+            # Obtener los datos de la tabla productos de la base de datos
+            productos = self.db_manager.obtener_productos()
+    
+            # Limpiar la tabla antes de insertar nuevos datos
+            self.table_prod.setRowCount(0)
+    
+            # Insertar los datos en la tabla table_prod
+            for row_number, row_data in enumerate(productos):
+                self.table_prod.insertRow(row_number)
+                for column_number, data in enumerate(row_data):
+                    self.table_prod.setItem(row_number, column_number, QtWidgets.QTableWidgetItem(str(data)))
+        except Exception as e:
+            print("Error al obtener productos:", e)
 
     def ordenar_por_nombre(self):
         self.ordenar_tabla(1)
@@ -531,32 +611,7 @@ class VentanaPrincipal(QtWidgets.QMainWindow):
 
     def abrir_eliminar_venta(self):
         eliminar_venta = eliminarventa()
-        eliminar_venta.exec_()
-
-    def mostrarPaginaProductos(self):
-        # Llamar a la función para mostrar los datos de los productos
-        self.mostrar_datos_productos()
-        self.stackedWidget.setCurrentWidget(self.page_productos)
-
-    def actualizar_datos_tabla(self):
-        self.mostrar_datos_productos()
-
-
-    def mostrar_datos_productos(self):  # Define el método dentro de la clase
-        try:
-            # Obtener los datos de la tabla productos de la base de datos
-            productos = self.db_manager.obtener_productos()
-
-            # Limpiar la tabla antes de insertar nuevos datos
-            self.table_prod.setRowCount(0)
-
-            # Insertar los datos en la tabla table_prod
-            for row_number, row_data in enumerate(productos):
-                self.table_prod.insertRow(row_number)
-                for column_number, data in enumerate(row_data):
-                    self.table_prod.setItem(row_number, column_number, QtWidgets.QTableWidgetItem(str(data)))
-        except Exception as e:
-            print("Error al obtener productos:", e)
+        eliminar_venta.exec_()    
 
     def setup_ui(self):
         # Supongamos que self.table_prod es tu tabla donde deseas eliminar filas
@@ -586,12 +641,26 @@ class VentanaPrincipal(QtWidgets.QMainWindow):
     def eliminar_fila_base_datos(self, id_fila):
     # Eliminar la fila de la base de datos utilizando el método eliminar_producto
      self.db_manager.eliminar_producto(id_fila)  # Utilizando el ID recibido
+    
+    def salida(self):
+        reply = QMessageBox.question(
+            self,
+            'Confirmación',
+            '¿Desea Salir?',
+            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.Yes
+        )
+        if reply == QMessageBox.Yes:
+            QApplication.quit()   
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     app.setApplicationName("inventario")
-    # Crear una instancia de DatabaseManager y conectar a la base de datos
     db_manager = DatabaseManager(r"recursos\bd\db.db")
-    # Pasar la instancia de DatabaseManager a la ventana principal
+    ventana_principal = VentanaPrincipal(db_manager)
+    ingreso_usuario = IngresoUsuario(db_manager)
+    widget = QStackedWidget()
+    widget.addWidget(ingreso_usuario)
+    widget.setGeometry(ingreso_usuario.geometry())
     icon = QIcon(r"recursos\img\smart.png")
     sys.exit(app.exec_())
