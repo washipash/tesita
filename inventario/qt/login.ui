@@ -26,40 +26,7 @@
    <string>Dialog</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">QFrame{
-	background-color: rgb(0, 170, 255);
-}
-
-
-QCheckBox{
-	font: 75 14pt &quot;Arial&quot;;
-}
-
-
-
-QLabel{
-font-size: 12pt;
-font: 87 12pts &quot;Arial Black&quot;;
-background-color:#000000ff;
-color:rgb(0, 0, 0);
-border: 0px solid #14C80C; 
-
-}
-
-
-QPushButton{
-background-color: rgb(61, 61, 61);
-border-radius: 15px;
-color: rgb(255, 255, 255);
-font: 77 10pt &quot;Arial Black&quot;;
-}
-
-QPushButton:hover{
-background-color: rgb(0, 206, 151);
-color: rgb(0, 0, 0);
-font: 77 10pt &quot;Arial Black&quot;;
-}
-</string>
+   <string notr="true"/>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout" stretch="1,8">
    <property name="spacing">
@@ -94,7 +61,39 @@ font: 77 10pt &quot;Arial Black&quot;;
      <property name="styleSheet">
       <string notr="true">QFrame{
 	background-color: rgb(60, 121, 181);
-}</string>
+}
+
+
+
+QCheckBox{
+	font: 75 14pt &quot;Arial&quot;;
+}
+
+
+
+QLabel{
+font-size: 12pt;
+font: 87 12pts &quot;Arial Black&quot;;
+background-color:#000000ff;
+color:rgb(0, 0, 0);
+border: 0px solid #14C80C; 
+
+}
+
+
+QPushButton{
+background-color: rgb(61, 61, 61);
+border-radius: 15px;
+color: rgb(255, 255, 255);
+font: 77 10pt &quot;Arial Black&quot;;
+}
+
+QPushButton:hover{
+background-color: rgb(0, 206, 151);
+color: rgb(0, 0, 0);
+font: 77 10pt &quot;Arial Black&quot;;
+}
+</string>
      </property>
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
@@ -511,6 +510,12 @@ font: 77 10pt &quot;Arial Black&quot;;
             </property>
             <property name="text">
              <string>Registrarme</string>
+            </property>
+            <property name="autoDefault">
+             <bool>false</bool>
+            </property>
+            <property name="default">
+             <bool>false</bool>
             </property>
            </widget>
           </item>

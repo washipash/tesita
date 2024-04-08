@@ -44,6 +44,11 @@ class VentanaAnadirProducto(QtWidgets.QDialog):
             QtWidgets.QMessageBox.critical(self, "Error", "El precio unitario debe ser mayor que cero.")
             return
         
+        # Verificar si el producto ya existe en la base de datos
+        if self.db_manager.existe_producto(nombre, marca, modelo):
+            QtWidgets.QMessageBox.warning(self, "Advertencia", "El producto ya existe en la base de datos. Por favor, modifique el producto existente o agregue otro.")
+            return
+        
         # Insertar el nuevo producto en la base de datos
         try:
             self.db_manager.insertar_producto(nombre, marca, modelo, cantidad, precio_unitario)

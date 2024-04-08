@@ -234,6 +234,63 @@ font: 77 10pt &quot;Arial Black&quot;;
             </spacer>
            </item>
            <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_11">
+             <item>
+              <spacer name="horizontalSpacer_10">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_8">
+               <item>
+                <widget class="QLabel" name="label_5">
+                 <property name="text">
+                  <string>Tipo de usuario</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QComboBox" name="tp_u_cbx"/>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer_11">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <spacer name="verticalSpacer_2">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
             <layout class="QHBoxLayout" name="horizontalLayout_5">
              <item>
               <spacer name="horizontalSpacer_2">
@@ -329,6 +386,18 @@ font: 77 10pt &quot;Arial Black&quot;;
                </item>
                <item>
                 <widget class="QLineEdit" name="pass_user_line">
+                 <property name="minimumSize">
+                  <size>
+                   <width>125</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>125</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
                  <property name="font">
                   <font>
                    <family>Arial</family>
@@ -398,7 +467,13 @@ font: 77 10pt &quot;Arial Black&quot;;
                 </widget>
                </item>
                <item>
-                <widget class="QLineEdit" name="new_pass_user_line">
+                <widget class="QLineEdit" name="rep_pass_user_line">
+                 <property name="minimumSize">
+                  <size>
+                   <width>125</width>
+                   <height>0</height>
+                  </size>
+                 </property>
                  <property name="font">
                   <font>
                    <family>Arial</family>
@@ -446,7 +521,7 @@ font: 77 10pt &quot;Arial Black&quot;;
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout_7">
              <item>
-              <widget class="QPushButton" name="cancel_r_btn">
+              <widget class="QPushButton" name="back_r_btn">
                <property name="minimumSize">
                 <size>
                  <width>120</width>
@@ -454,7 +529,7 @@ font: 77 10pt &quot;Arial Black&quot;;
                 </size>
                </property>
                <property name="text">
-                <string>CANCELAR</string>
+                <string>VOLVER</string>
                </property>
               </widget>
              </item>

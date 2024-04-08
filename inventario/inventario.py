@@ -1,17 +1,21 @@
 import sys
-from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtCore import QObject, pyqtSignal
 from PyQt5.QtWidgets import QApplication
-from main import  VentanaPrincipal, IngresoUsuario, Registro  # Reemplaza 'your_module' con el nombre real de tu módulo
+from main import IngresoUsuario, Registro, VentanaPrincipal
+from conection import DatabaseManager  # Importa la clase DatabaseManager desde tu archivo de conexión
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    
-    # Crear una instancia de la ventana de registro
-    ventana_registro = Registro()
-    
+
+    # Crear una instancia de DatabaseManager y conectar a la base de datos
+    db_manager = DatabaseManager(r"recursos\bd\db.db")
+
+    # Crear una instancia de la ventana de registro, pasando db_manager como argumento
+    ventana_registro = Registro(db_manager)
+
     # Crear una instancia de la ventana de inicio de sesión, pasando la ventana de registro como argumento
-    ventana_ingreso = IngresoUsuario(ventana_registro)
-    
+    ventana_ingreso = IngresoUsuario(db_manager)
+
     # Conectar la señal 'usuario_registrado' de la ventana de registro con el método 'abrir_ingreso' de la ventana de inicio de sesión
     ventana_registro.usuario_registrado.connect(ventana_ingreso.abrir_ingreso)
     
