@@ -96,26 +96,24 @@ color: rgb(0, 0, 0);
 font: 77 10pt &quot;Arial Black&quot;;
 }
 
-
 QTableWidget{
-	background-color: rgb(198, 198, 198);
-
+	background-color: rgb(69, 207, 207);
 font-size: 12pt;
 color: #000000;
 }
 
 QHeaderView::section{
 
-background-color: rgb(0, 206, 151);
-border: 1px solid rgb(0, 0, 0);
+
+	background-color:rgb(234, 234, 234);
+border: 1px solid rgb(0, 184, 184);
 font-size:12pt;
 
 }
 
-QTableWidget QTableCornerButton::section{
-
-background-color: rgb(0, 0, 0);
-border:1px solid rgb(0, 206, 151);
+QTableWidget:QTableCornerButton::section{
+	background-color: rgb(8, 8, 8);
+border:1px solid rgb(198, 255, 253);
 }
 
 </string>
@@ -171,7 +169,12 @@ border:1px solid rgb(0, 206, 151);
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_6">
         <item>
-         <widget class="QTableWidget" name="table_day_ventas">
+         <widget class="QTableWidget" name="table_ventas_d">
+          <row>
+           <property name="text">
+            <string/>
+           </property>
+          </row>
           <column>
            <property name="text">
             <string>N° VENTA</string>
@@ -216,6 +219,11 @@ border:1px solid rgb(0, 206, 151);
             </font>
            </property>
           </column>
+          <column>
+           <property name="text">
+            <string/>
+           </property>
+          </column>
          </widget>
         </item>
         <item>
@@ -253,7 +261,7 @@ border:1px solid rgb(0, 206, 151);
                  </spacer>
                 </item>
                 <item>
-                 <widget class="QLineEdit" name="total_d_v_line">
+                 <widget class="QLineEdit" name="total_v_line">
                   <property name="enabled">
                    <bool>true</bool>
                   </property>
@@ -307,7 +315,7 @@ border:1px solid rgb(0, 206, 151);
                  </spacer>
                 </item>
                 <item>
-                 <widget class="QLineEdit" name="total_d_bs_line">
+                 <widget class="QLineEdit" name="total_bs_line">
                   <property name="enabled">
                    <bool>true</bool>
                   </property>

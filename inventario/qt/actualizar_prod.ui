@@ -54,7 +54,7 @@ QLabel{
 font-size: 12pt;
 font: 87 12pts &quot;Arial Black&quot;;
 background-color:#000000ff;
-color:rgb(0, 0, 127);
+color:rgb(0, 0, 0);
 border: 0px solid #14C80C; 
 
 }
@@ -141,7 +141,7 @@ font: 77 10pt &quot;Arial Black&quot;;
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="line_edit_nombre"/>
+               <widget class="QLineEdit" name="name_line"/>
               </item>
              </layout>
             </item>
@@ -158,7 +158,7 @@ font: 77 10pt &quot;Arial Black&quot;;
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="line_edit_modelo"/>
+               <widget class="QLineEdit" name="modelo_line"/>
               </item>
              </layout>
             </item>
@@ -172,7 +172,7 @@ font: 77 10pt &quot;Arial Black&quot;;
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="line_edit_marca"/>
+               <widget class="QLineEdit" name="marca_line"/>
               </item>
              </layout>
             </item>
@@ -186,7 +186,7 @@ font: 77 10pt &quot;Arial Black&quot;;
                </widget>
               </item>
               <item>
-               <widget class="QSpinBox" name="spin_edit_cant"/>
+               <widget class="QSpinBox" name="cant"/>
               </item>
              </layout>
             </item>
@@ -200,7 +200,7 @@ font: 77 10pt &quot;Arial Black&quot;;
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="line_edit_precio"/>
+               <widget class="QLineEdit" name="precio_line"/>
               </item>
              </layout>
             </item>
@@ -239,7 +239,7 @@ font: 77 10pt &quot;Arial Black&quot;;
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_8">
         <item>
-         <widget class="QPushButton" name="btn_edit_back">
+         <widget class="QPushButton" name="close_btn">
           <property name="minimumSize">
            <size>
             <width>120</width>
@@ -273,7 +273,7 @@ font: 77 10pt &quot;Arial Black&quot;;
          </spacer>
         </item>
         <item>
-         <widget class="QPushButton" name="btn_edit_aceptar">
+         <widget class="QPushButton" name="done_btn">
           <property name="minimumSize">
            <size>
             <width>120</width>

@@ -496,7 +496,7 @@ border:1px solid rgb(0, 206, 151);
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_4">
            <item>
-            <widget class="QPushButton" name="cancel_b_btn">
+            <widget class="QPushButton" name="close_btn">
              <property name="minimumSize">
               <size>
                <width>120</width>
@@ -522,7 +522,7 @@ border:1px solid rgb(0, 206, 151);
             </spacer>
            </item>
            <item>
-            <widget class="QPushButton" name="delete_b_btn">
+            <widget class="QPushButton" name="delete_btn">
              <property name="minimumSize">
               <size>
                <width>120</width>

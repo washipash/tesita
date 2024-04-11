@@ -1,16 +1,3 @@
-from PyQt5 import QtCore,QtGui,QtWidgets
-from PyQt5.uic import loadUi
-from PyQt5.QtCore import QDate , QBuffer, QByteArray , QTime
-from PyQt5.QtGui import QImage,QPixmap 
-from PyQt5.QtGui import QIcon
-from PyQt5.QtCore import QIODevice, QDateTime, Qt
-from PyQt5.QtWidgets import QFileDialog
-from PyQt5.QtWidgets import QWidget ,QApplication ,QMainWindow,QStackedWidget,QGraphicsDropShadowEffect, QCalendarWidget , QBoxLayout
-from PyQt5.QtWidgets import QMessageBox,QLabel,QTableWidgetItem, QLineEdit
-from PyQt5.QtWidgets import QDialog
-from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtCore import QTimer 
-from PyQt5.QtCore import Qt 
 import sqlite3
 import datetime
 import os
@@ -66,15 +53,16 @@ class DatabaseManager:
             print("Error al actualizar precio en bolívares soberanos:", e)
             self.connection.rollback()  # Revertir la transacción en caso de error
 
-    def obtener_producto_por_nombre(self, nombre):
-        try:
-            # Ejecutar una consulta para obtener los datos del producto por su nombre
-            self.cursor.execute("SELECT * FROM productos WHERE nombre = ?", (nombre,))
-            producto = self.cursor.fetchone()
-            return producto
-        except sqlite3.Error as e:
-            print("Error al obtener producto por nombre:", e)
-            return None
+    def obtener_producto_por_nombre(self, nombre, marca, modelo):
+       try:
+           # Ejecutar una consulta para obtener los datos del producto por su nombre
+           self.cursor.execute("SELECT * FROM productos WHERE nombre = ? AND marca = ? AND modelo = ?", (nombre, marca, modelo))
+           producto = self.cursor.fetchone()
+           print("Producto encontrado:", producto)
+           return producto
+       except sqlite3.Error as e:
+           print("Error al obtener producto por nombre:", e)
+           return None
         
     def obtener_producto_por_id(self, ID_P):
         try:
@@ -107,15 +95,15 @@ class DatabaseManager:
         except sqlite3.Error as e:
             print("Error al restar cantidad de producto:", e)   
 
-    def insertar_salida(self, ID_P, precio_venta, precio_bs, cantidad_vendida):
+    def insertar_salida(self, ID_P, precio_venta, precio_bs, cantidad_vendida, CEDULA):
             try:
                 # Obtener la fecha y hora actual
                 fecha_actual = datetime.date.today()
                 hora_actual = datetime.datetime.now().strftime("%H:%M:%S")
     
                 # Ejecutar la consulta SQL para insertar los datos de la salida
-                self.cursor.execute("INSERT INTO ventas (ID_P, fecha, hora, precio_vent, precio_bs) VALUES (?, ?, ?, ?, ?)",
-                                    (ID_P, fecha_actual, hora_actual, precio_venta, precio_bs))
+                self.cursor.execute("INSERT INTO ventas (ID_P, fecha, hora, precio_vent, precio_bs, CEDULA) VALUES (?, ?, ?, ?, ?, ?)",
+                                    (ID_P, fecha_actual, hora_actual, precio_venta, precio_bs, CEDULA))
                 self.connection.commit()  # Confirmar la transacción
                 
                 # Restar la cantidad vendida de la tabla de productos
@@ -143,8 +131,23 @@ class DatabaseManager:
             print("Cantidad del producto actualizada correctamente.")
         except sqlite3.Error as e:
             print("Error al actualizar la cantidad del producto:", e)    
+    
+    def existe_producto(self, nombre, marca, modelo):
+        try:
+            # Convertir los parámetros a minúsculas para normalizar
+            nombre = nombre.lower()
+            marca = marca.lower()
+            modelo = modelo.lower()
+
+            # Ejecutar una consulta para verificar si el producto existe en la base de datos
+            self.cursor.execute("SELECT COUNT(*) FROM productos WHERE LOWER(nombre) = ? AND LOWER(marca) = ? AND LOWER(modelo) = ?", (nombre, marca, modelo))
+            count = self.cursor.fetchone()[0]
+            return count > 0  # Devuelve True si el producto existe, False si no
+        except sqlite3.Error as e:
+            print("Error al verificar si el producto existe:", e)
+            return False        
             
-    def insertar_usuario(self, nombre, password, repetir_contraseña, tipo):
+    def insertar_usuario(self, username, nombre, password, repetir_contraseña, tipo=None):
         try:
             # Verificar si las contraseñas coinciden
             if password != repetir_contraseña:
@@ -154,7 +157,7 @@ class DatabaseManager:
             # Verificar el tipo seleccionado y asignar el valor correspondiente
             tipo = "administrador" if tipo == "administrador" else "normal"
             # Insertar los datos en la tabla 'user'
-            self.cursor.execute("INSERT INTO user (nombre, password, tipo) VALUES (?, ?, ?)", (nombre, password, tipo))
+            self.cursor.execute("INSERT INTO user (username, nombre, password, tipo) VALUES (?, ?, ?, ?)", (username, nombre, password, tipo))
             # Confirmar la transacción
             self.connection.commit()
             print("Usuario registrado exitosamente.")
@@ -163,10 +166,10 @@ class DatabaseManager:
             print("Error al insertar usuario:", e)
             return False
     
-    def cargar_datos(self, nombre, password):
+    def cargar_datos(self, username, password):
         try:
             # Ejecutar una consulta para verificar las credenciales del usuario
-            self.cursor.execute("SELECT * FROM user WHERE nombre = ? AND password = ?", (nombre, password))
+            self.cursor.execute("SELECT * FROM user WHERE username = ? AND password = ?", (username, password))
             usuario = self.cursor.fetchone()
     
             if usuario:
@@ -179,3 +182,55 @@ class DatabaseManager:
             # Manejar cualquier error de la base de datos
             print("Error al autenticar usuario:", e)
             return None
+    
+    def obtener_usuarios(self):
+        try:
+            self.cursor.execute("SELECT * FROM user")
+            usuarios = self.cursor.fetchall()
+            return usuarios
+        except sqlite3.Error as e:
+            print("Error al obtener los usuarios:", e)
+            return None
+
+    def eliminar_usuario(self, ID_U):
+        try:
+            self.cursor.execute("DELETE FROM user WHERE ID_U = ?", (ID_U,))
+            self.connection.commit()  # Confirmar la transacción
+            print("Usuario eliminado correctamente.")
+        except sqlite3.Error as e:
+            print("Error al eliminar usuario:", e)    
+
+    def obtener_ventas_d(self):
+        try:
+            self.cursor.execute("SELECT ID_V, fecha, hora, precio_vent, precio_bs FROM ventas_d")
+            ventas_d = self.cursor.fetchall()
+            return ventas_d
+        except sqlite3.Error as e:
+            print("Error al obtener las ventas diarias:", e)
+            return None
+        
+    def usuario_existe(self, username):
+        try:
+            # Realizar la consulta para verificar si el usuario existe
+            # Suponiendo que tu tabla de usuarios se llama 'user' y el campo de nombre de usuario 'username'
+            query = "SELECT COUNT(*) FROM user WHERE username = ?"
+            self.cursor.execute(query, (username,))
+            resultado = self.cursor.fetchone()[0]
+
+            # Si resultado es mayor que 0, significa que el usuario ya existe
+            return resultado > 0
+        except sqlite3.Error as e:
+            print("Error al verificar si el usuario existe:", e)
+            return False    
+        
+    def actualizar_producto(self, nombre_antiguo, nuevo_nombre, nuevo_modelo, nueva_marca, nueva_cantidad, nuevo_precio):
+        try:
+            # Realizar la actualización en la base de datos
+            self.cursor.execute("UPDATE productos SET nombre = ?, modelo = ?, marca = ?, cantidad = ?, precio_unitario = ? WHERE nombre = ?", 
+                                (nuevo_nombre, nuevo_modelo, nueva_marca, nueva_cantidad, nuevo_precio, nombre_antiguo))
+            # Confirmar la transacción
+            self.connection.commit()
+            print("Producto actualizado correctamente.")
+        except sqlite3.Error as e:
+            print("Error al actualizar producto:", e)
+                        

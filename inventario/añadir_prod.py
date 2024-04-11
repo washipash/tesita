@@ -46,8 +46,8 @@ class VentanaAnadirProducto(QtWidgets.QDialog):
         
         # Verificar si el producto ya existe en la base de datos
         if self.db_manager.existe_producto(nombre, marca, modelo):
-            QtWidgets.QMessageBox.warning(self, "Advertencia", "El producto ya existe en la base de datos. Por favor, modifique el producto existente o agregue otro.")
-            return
+         QtWidgets.QMessageBox.warning(self, "Advertencia", "El producto ya existe en la base de datos. Por favor, modifique el producto existente o agregue otro.")
+         return
         
         # Insertar el nuevo producto en la base de datos
         try:
