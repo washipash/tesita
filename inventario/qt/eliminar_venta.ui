@@ -32,9 +32,73 @@
    <item>
     <widget class="QFrame" name="frame">
      <property name="styleSheet">
-      <string notr="true">
+      <string notr="true">QFrame{
 
 background-color: rgb(0, 145, 217);
+}
+
+
+
+QLabel{
+font-size: 12pt;
+font: 87 12pts &quot;Arial Black&quot;;
+background-color:#000000ff;
+color:rgb(0, 0, 0);
+border: 0px solid #14C80C; 
+
+}
+
+QLineEdit{
+
+border: 0px;
+	background-color: rgb(255, 255, 255);
+border-bottom:2px solid rgb(61, 61, 61);
+font:75 12pt &quot;Times New Roman&quot; ;
+
+}
+
+QTextEdit{
+
+border: 0px;
+	background-color: rgb(255, 255, 255);
+border-bottom:2px solid rgb(61, 61, 61);
+font:75 12pt &quot;Times New Roman&quot; ;
+
+}
+
+QPushButton{
+background-color: rgb(61, 61, 61);
+border-radius: 15px;
+color: rgb(255, 255, 255);
+font: 77 10pt &quot;Arial Black&quot;;
+}
+
+QPushButton:hover{
+background-color: rgb(0, 206, 151);
+color: rgb(0, 0, 0);
+font: 77 10pt &quot;Arial Black&quot;;
+}
+
+
+QTableWidget{
+	background-color: rgb(69, 207, 207);
+font-size: 12pt;
+color: #000000;
+}
+
+QHeaderView::section{
+
+
+	background-color:rgb(234, 234, 234);
+border: 1px solid rgb(0, 184, 184);
+font-size:12pt;
+
+}
+
+QTableWidget:QTableCornerButton::section{
+	background-color: rgb(8, 8, 8);
+border:1px solid rgb(198, 255, 253);
+}
 </string>
      </property>
      <property name="frameShape">
@@ -44,21 +108,22 @@ background-color: rgb(0, 145, 217);
       <enum>QFrame::Raised</enum>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout" stretch="1,8">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>0</number>
+      </property>
       <item>
        <widget class="QFrame" name="frame_sup">
         <property name="styleSheet">
-         <string notr="true">
-QLabel{
-font-size: 12pt;
-font: 87 12pts &quot;Arial Black&quot;;
-background-color:#000000ff;
-color:;
-	color: rgb(0, 0, 0);
-border: 0px solid #14C80C; 
-
-}
-
-</string>
+         <string notr="true">background-color: rgb(0, 85, 127);</string>
         </property>
         <property name="frameShape">
          <enum>QFrame::StyledPanel</enum>
@@ -111,101 +176,7 @@ border: 0px solid #14C80C;
        <widget class="QFrame" name="frame_inf">
         <property name="styleSheet">
          <string notr="true">
-
-QLabel{
-font-size: 12pt;
-font: 87 12pts &quot;Arial Black&quot;;
-background-color:#000000ff;
-color:rgb(0, 0, 0);
-border: 0px solid #14C80C; 
-
-}
-
-QLineEdit{
-
-border: 0px;
-	background-color: rgb(255, 255, 255);
-border-bottom:2px solid rgb(61, 61, 61);
-font:75 12pt &quot;Times New Roman&quot; ;
-
-}
-
-QTextEdit{
-
-border: 0px;
-	background-color: rgb(255, 255, 255);
-border-bottom:2px solid rgb(61, 61, 61);
-font:75 12pt &quot;Times New Roman&quot; ;
-
-}
-
-QPushButton{
-background-color: rgb(61, 61, 61);
-border-radius: 15px;
-color: rgb(255, 255, 255);
-font: 77 10pt &quot;Arial Black&quot;;
-}
-
-QPushButton:hover{
-background-color: rgb(0, 206, 151);
-color: rgb(0, 0, 0);
-font: 77 10pt &quot;Arial Black&quot;;
-}
-
-
-QTableWidget{
-	background-color: rgb(198, 198, 198);
-
-font-size: 12pt;
-color: #000000;
-}
-
-QHeaderView::section{
-
-background-color: rgb(0, 206, 151);
-border: 1px solid rgb(0, 0, 0);
-font-size:12pt;
-
-}
-
-QTableWidget QTableCornerButton::section{
-
-background-color: rgb(0, 0, 0);
-border:1px solid rgb(0, 206, 151);
-}
-
-  QScrollBar:vertical {
-                background-color: #333333;
-                width: 10px;
-                margin: 0px 0px 0px 0px;
-                border-radius: 5px;
-            }
-            QScrollBar:horizontal {
-                background-color: #333333;
-                height: 10px;
-                margin: 0px 0px 0px 0px;
-                border-radius: 5px;
-            }
-            QScrollBar::handle:vertical {
-                background-color: #B0B0B0;
-                min-height: 20px;
-                border-radius: 5px;
-            }
-            QScrollBar::handle:horizontal {
-                background-color: #B0B0B0;
-                min-width: 20px;
-                border-radius: 5px;
-            }
-            QScrollBar::sub-line:vertical, QScrollBar::sub-line:horizontal {
-                background-color: white;
-                border: none;
-                border-radius: 5px;
-            }
-            QScrollBar::add-line:vertical, QScrollBar::add-line:horizontal {
-                background-color: white;
-                border: none;
-                border-radius: 5px;
-             }</string>
+</string>
         </property>
         <property name="frameShape">
          <enum>QFrame::StyledPanel</enum>
@@ -213,9 +184,9 @@ border:1px solid rgb(0, 206, 151);
         <property name="frameShadow">
          <enum>QFrame::Raised</enum>
         </property>
-        <layout class="QVBoxLayout" name="verticalLayout_5">
+        <layout class="QVBoxLayout" name="verticalLayout_6">
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <layout class="QHBoxLayout" name="horizontalLayout_3">
            <item>
             <layout class="QVBoxLayout" name="verticalLayout_3">
              <item>
@@ -294,7 +265,7 @@ border:1px solid rgb(0, 206, 151);
              <item>
               <widget class="QLabel" name="label_3">
                <property name="text">
-                <string>PRECIO DE SALIDA</string>
+                <string>PRECIO $$$</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignCenter</set>
@@ -320,13 +291,13 @@ border:1px solid rgb(0, 206, 151);
                 <widget class="QLineEdit" name="total_buscar_v_line">
                  <property name="minimumSize">
                   <size>
-                   <width>200</width>
+                   <width>125</width>
                    <height>0</height>
                   </size>
                  </property>
                  <property name="maximumSize">
                   <size>
-                   <width>200</width>
+                   <width>125</width>
                    <height>16777215</height>
                   </size>
                  </property>
@@ -337,6 +308,69 @@ border:1px solid rgb(0, 206, 151);
                </item>
                <item>
                 <spacer name="horizontalSpacer_7">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QVBoxLayout" name="verticalLayout_5">
+             <item>
+              <widget class="QLabel" name="label_4">
+               <property name="text">
+                <string>PRECIO BS</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_2">
+               <item>
+                <spacer name="horizontalSpacer_9">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="QLineEdit" name="lineEdit">
+                 <property name="minimumSize">
+                  <size>
+                   <width>125</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>125</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                 <property name="readOnly">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer_10">
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
                  </property>
@@ -369,40 +403,14 @@ border:1px solid rgb(0, 206, 151);
             </size>
            </property>
            <property name="styleSheet">
-            <string notr="true">QFrame{
-
-background-color: rgb(61, 61, 61);
-
-}
-
-
-
-
-QTableWidget{
-	background-color: rgb(198, 198, 198);
-
-font-size: 12pt;
-color: #000000;
-}
-
-QHeaderView::section{
-
-background-color: rgb(0, 206, 151);
-border: 1px solid rgb(0, 0, 0);
-font-size:12pt;
-
-}
-
-QTableWidget QTableCornerButton::section{
-
-background-color: rgb(0, 0, 0);
-border:1px solid rgb(0, 206, 151);
-}
-
-
-
-</string>
+            <string notr="true"/>
            </property>
+           <attribute name="horizontalHeaderMinimumSectionSize">
+            <number>42</number>
+           </attribute>
+           <attribute name="horizontalHeaderDefaultSectionSize">
+            <number>150</number>
+           </attribute>
            <column>
             <property name="text">
              <string>ID</string>
@@ -491,6 +499,11 @@ border:1px solid rgb(0, 206, 151);
              </font>
             </property>
            </column>
+           <column>
+            <property name="text">
+             <string/>
+            </property>
+           </column>
           </widget>
          </item>
          <item>
@@ -503,8 +516,57 @@ border:1px solid rgb(0, 206, 151);
                <height>30</height>
               </size>
              </property>
+             <property name="styleSheet">
+              <string notr="true">QPushButton:pressed {
+    background-color: rgb(0, 128, 143);
+}
+</string>
+             </property>
              <property name="text">
               <string>CANCELAR</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_11">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButton">
+             <property name="minimumSize">
+              <size>
+               <width>140</width>
+               <height>30</height>
+              </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">
+QPushButton:hover{
+background-color: rgb(255, 85, 0);
+color: rgb(0, 0, 0);
+font: 77 10pt &quot;Arial Black&quot;;
+}
+
+QPushButton:pressed {
+	background-color: rgb(177, 118, 0);
+}
+</string>
+             </property>
+             <property name="text">
+              <string>ELIMINAR UNO</string>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>../recursos/img/varita-magica.png</normaloff>../recursos/img/varita-magica.png</iconset>
              </property>
             </widget>
            </item>
@@ -535,10 +597,18 @@ background-color: rgb(255, 27, 6);
 color: rgb(0, 0, 0);
 font: 77 10pt &quot;Arial Black&quot;;
 }
+
+QPushButton:pressed {
+	background-color: rgb(170, 0, 0);
+}
 </string>
              </property>
              <property name="text">
               <string>ELIMINAR</string>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>../recursos/img/limpiar.png</normaloff>../recursos/img/limpiar.png</iconset>
              </property>
             </widget>
            </item>

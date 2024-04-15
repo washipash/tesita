@@ -1,7 +1,6 @@
 import sys
-import requests
-import pandas as pd
-from openpyxl import Workbook
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
 from PyQt5 import QtCore,QtGui,QtWidgets
 from PyQt5.uic import loadUi
 from PyQt5.QtCore import QDate , QBuffer, QByteArray , QTime
@@ -17,10 +16,7 @@ from PyQt5.QtCore import QTimer
 from PyQt5.QtCore import Qt 
 import hashlib
 import sqlite3
-import os
 import json
-import re
-import openpyxl
 import datetime
 from datetime import datetime
 from añadir_prod import VentanaAnadirProducto
@@ -116,6 +112,11 @@ class Registro(QDialog):
         repetir_contraseña = self.rep_pass_user_line.text()
         tipo = self.tp_u_cbx.currentText()  # Obtener el tipo seleccionado del ComboBox
         self.db_manager.insertar_usuario(username, nombre, password, repetir_contraseña, tipo)
+        
+        # Verificar si la contraseña tiene al menos 6 caracteres
+        if len(password) < 6:
+            QMessageBox.warning(self, "Error", "La contraseña debe tener al menos 6 caracteres.")
+            return
         
         # Verificar si el usuario ya existe
         if self.db_manager.usuario_existe(username):
@@ -245,10 +246,51 @@ class Ventanabuscarventa(QtWidgets.QDialog):
         loadUi(r"qt\buscar_venta.ui", self)
         self.db_manager = db_manager 
         self.close_btn.clicked.connect(self.cerrar)
+        self.ultima_btn.clicked.connect(self.mostrar_ultima_venta)
+        self.buscar_btn.clicked.connect(self.buscar_venta)
         
     def cerrar(self):
         # Cerrar la ventana actual de registro
         self.close()     
+        
+    def mostrar_ultima_venta(self):
+        # Llamar al método para obtener la última venta
+        venta = self.db_manager.obtener_ultima_venta()
+        if venta:
+            self.mostrar_venta(venta)
+        else:
+            QtWidgets.QMessageBox.warning(self, "Advertencia", "No se encontró ninguna venta.")
+
+    def buscar_venta(self):
+        # Obtener el número de venta ingresado
+        ID_V = self.n_venta.text()
+
+        # Llamar al método para buscar la venta por número de venta
+        venta = self.db_manager.buscar_venta_por_numero(ID_V)
+        if venta:
+            self.mostrar_venta(venta)
+        else:
+            QtWidgets.QMessageBox.warning(self, "Advertencia", "No se encontró ninguna venta con el número proporcionado.")
+
+    def mostrar_venta(self, venta):
+        # Limpiar la tabla antes de mostrar una nueva venta
+        self.table_ventas.clearContents()
+
+        # Mostrar los datos de la venta en la tabla
+        self.table_ventas.setRowCount(1)  # Asegurarse de tener solo una fila
+        N_P, modelo_P, marca_P, cant_P, precio_unitario, precio_bs = venta
+
+        # Llenar las celdas de la tabla con los datos de la venta
+        self.table_ventas.setItem(0, 0, QTableWidgetItem(N_P))
+        self.table_ventas.setItem(0, 1, QTableWidgetItem(modelo_P))
+        self.table_ventas.setItem(0, 2, QTableWidgetItem(marca_P))
+        self.table_ventas.setItem(0, 3, QTableWidgetItem(str(cant_P)))
+        self.table_ventas.setItem(0, 4, QTableWidgetItem(str(precio_unitario)))
+        self.table_ventas.setItem(0, 5, QTableWidgetItem(str(precio_bs)))
+
+        # Actualizar los campos de total_v y total_bs
+        self.total_v.setText(str(precio_unitario))
+        self.total_bs.setText(str(precio_bs))    
 
 
 class ventanaeditarproducto(QtWidgets.QDialog):
@@ -287,7 +329,7 @@ class ventanaeditarproducto(QtWidgets.QDialog):
         nuevo_precio = self.precio_line.text()
 
         # Actualizar el producto en la base de datos
-        self.db_manager.actualizar_producto(self.nombre, nuevo_nombre, nuevo_modelo, nueva_marca, nueva_cantidad, nuevo_precio)
+        self.db_manager.actualizar_producto(self.nombre, nuevo_nombre, nueva_marca, nuevo_modelo, nueva_cantidad, nuevo_precio)
 
         # Cerrar la ventana de edición
         self.close()
@@ -345,6 +387,26 @@ class VentanaPrincipal(QtWidgets.QMainWindow):
         self.act_modelo_btn.clicked.connect(self.ordenar_por_modelo)
         self.edit_p_btn.clicked.connect(self.abrir_ventana_editar_producto)
         self.user_label = self.findChild(QtWidgets.QLabel, "user_label")
+        self.update_btn.clicked.connect(self.actualizar_tabla_productos)
+    
+    def actualizar_tabla_productos(self):
+        # Limpia la tabla de productos
+        self.table_prod.clearContents()
+        self.table_prod.setRowCount(0)
+
+        # Obtén los datos actualizados de la base de datos
+        productos_actualizados = self.db_manager.obtener_productos()
+
+        # Verifica si se obtuvieron datos de la base de datos
+        if productos_actualizados:
+            # Establece el número de filas en la tabla de productos
+            self.table_prod.setRowCount(len(productos_actualizados))
+
+            # Itera sobre los datos obtenidos y agrega cada fila a la tabla de productos
+            for row, producto in enumerate(productos_actualizados):
+                for col, data in enumerate(producto):
+                    item = QTableWidgetItem(str(data))
+                    self.table_prod.setItem(row, col, item)    
         
     def actualizar_usuario(self, nombre):
         self.user_label.setText(f"bienvenido, {nombre}")    
@@ -515,17 +577,13 @@ class VentanaPrincipal(QtWidgets.QMainWindow):
             QtWidgets.QMessageBox.warning(self, "Advertencia", "Ingrese solo el ID o el nombre, modelo y marca del producto para realizar la búsqueda.")
             return  
         
-        print("Producto recuperado:", producto)  # Agregar esta línea para verificar el producto recuperado
-        
         if producto is not None:
             cantidad_disponible = producto[4]    
     
             if int(cantidad) > cantidad_disponible:
                 QtWidgets.QMessageBox.warning(self, "Advertencia", "La cantidad ingresada es mayor que la cantidad disponible.")
                 return    
-    
-            marca = producto[2]
-            modelo = producto[3]
+            
             precio_unitario = producto[5]    
     
             precio_venta = float(precio_unitario) * int(cantidad)
@@ -585,7 +643,6 @@ class VentanaPrincipal(QtWidgets.QMainWindow):
                 # Actualizar la cantidad del producto en la base de datos
                 nueva_cantidad = cantidad_disponible - int(cantidad)
                 self.db_manager.actualizar_cantidad_producto(nombre, nueva_cantidad)
-                print("Cantidad del producto actualizada correctamente en la base de datos.")
             except Exception as e:
                 print("Error al actualizar la cantidad del producto:", e)
         else:
@@ -593,37 +650,60 @@ class VentanaPrincipal(QtWidgets.QMainWindow):
             QtWidgets.QMessageBox.warning(self, "Advertencia", "Producto no encontrado.")
 
     def guardar_salida(self):
-        num_filas = self.table_prod_comprados.rowCount()    
+        num_filas = self.table_prod_comprados.rowCount()
+
         # Verificar si hay datos en el QTableWidget
         if num_filas == 0:
             QtWidgets.QMessageBox.warning(self, "Advertencia", "No hay productos en la lista para guardar la salida.")
             return   
-        # Obtener los precios de venta y bs de los QLineEdits
-        precio_venta = float(self.total_v_line.text())
-        precio_bs = float(self.total_bs_line.text())    
-        # Recorrer las filas del QTableWidget y obtener los datos
-        for columna in range(num_filas):
-            id_producto_item = self.table_prod_comprados.item(columna, 1)  
-            # Verificar si alguno de los ítems es None
-            if id_producto_item is None:
-                QtWidgets.QMessageBox.warning(self, "Advertencia", f"Faltan datos en la fila {columna+1}.")
-                return
-    
-            ID_P = id_producto_item.text()   
-            # Obtener la cantidad vendida desde la columna 5 (Cantidad) de la tabla
-            cantidad_vendida_item = self.table_prod_comprados.item(columna, 4)
-            if cantidad_vendida_item is None:
-                QtWidgets.QMessageBox.warning(self, "Advertencia", f"Falta la cantidad vendida en la columna {columna+1}.")
-                return
-            cantidad_vendida = int(cantidad_vendida_item.text())   
-            # Llamada al método insertar_salida con los argumentos necesarios, incluida cantidad_vendida
-            self.db_manager.insertar_salida(ID_P, precio_venta, precio_bs, cantidad_vendida)   
+
+        # Inicializar listas para almacenar los datos
+        productos_vendidos = []
+
+        # Recorrer las filas del QTableWidget y obtener los productos vendidos
+        for fila in range(num_filas):
+            ID_P = self.table_prod_comprados.item(fila, 0).text()
+            nombre = self.table_prod_comprados.item(fila, 1).text()
+            modelo = self.table_prod_comprados.item(fila, 2).text()
+            marca = self.table_prod_comprados.item(fila, 3).text()
+            cantidad = self.table_prod_comprados.item(fila, 4).text()
+            precio_unitario = self.table_prod_comprados.item(fila, 5).text()
+
+            # Agregar el producto vendido a la lista
+            productos_vendidos.append((ID_P, nombre, modelo, marca, cantidad, precio_unitario))
+
+        # Obtener el precio de venta de total_v_line
+        precio_venta_text = self.total_v_line.text()
+        if not precio_venta_text:
+            QtWidgets.QMessageBox.warning(self, "Advertencia", "Por favor, ingrese el precio de venta.")
+            return
+        try:
+            precio_venta = float(precio_venta_text)
+        except ValueError:
+            QtWidgets.QMessageBox.warning(self, "Advertencia", "El precio de venta debe ser un número válido.")
+            return
+
+        # Obtener el precio_bs de total_bs_line
+        precio_bs_text = self.total_bs_line.text()
+        if not precio_bs_text:
+            QtWidgets.QMessageBox.warning(self, "Advertencia", "Por favor, ingrese el precio en bolívares.")
+            return
+        try:
+            precio_bs = float(precio_bs_text)
+        except ValueError:
+            QtWidgets.QMessageBox.warning(self, "Advertencia", "El precio en bolívares debe ser un número válido.")
+            return
+
+        # Llamada al método insertar_salida con los argumentos necesarios
+        self.db_manager.insertar_salida(productos_vendidos, precio_venta, precio_bs)
+
         # Limpiar el QTableWidget después de guardar la salida
         self.table_prod_comprados.setRowCount(0)   
+
         # Limpiar los campos de total_v_line y total_bs_line
         self.total_v_line.clear()
         self.total_bs_line.clear()
-
+        
     def setup_ui(self):
         # Supongamos que self.table_prod_comprados es tu tabla donde deseas eliminar filas
         self.table_prod_comprados = QtWidgets.QTableWidget(self)
@@ -656,13 +736,11 @@ class VentanaPrincipal(QtWidgets.QMainWindow):
             self.total_bs_line.clear()
  # Configura la imagen en el QLabel
         pixmap = QtGui.QPixmap(r"recursos\img\smart.png")  # Cambia la ruta por la de tu imagen
-        # Cambia el tamaño de la imagen
-        scaled_pixmap = pixmap.scaled(200, 200)  # Cambia 200, 200 por el tamaño deseado
+        # Cambia el tamaño de la imagen     
         self.img_label.setPixmap(pixmap)
         # Configura la imagen en el QLabel
         pixmap = QtGui.QPixmap(r"recursos\img\manual.png")  # Cambia la ruta por la de tu imagen
         # Cambia el tamaño de la imagen
-        scaled_pixmap = pixmap.scaled(200, 200)  # Cambia 200, 200 por el tamaño deseado
         self.manual_label.setPixmap(pixmap)
     # Método para abrir la ventana de añadir producto
     def abrir_ventana_anadir_producto(self):

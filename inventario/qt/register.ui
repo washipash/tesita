@@ -239,6 +239,12 @@ font: 77 10pt &quot;Arial Black&quot;;
                    <pointsize>12</pointsize>
                   </font>
                  </property>
+                 <property name="maxLength">
+                  <number>10</number>
+                 </property>
+                 <property name="placeholderText">
+                  <string/>
+                 </property>
                 </widget>
                </item>
               </layout>
@@ -308,6 +314,12 @@ font: 77 10pt &quot;Arial Black&quot;;
                    <family>Arial</family>
                    <pointsize>12</pointsize>
                   </font>
+                 </property>
+                 <property name="maxLength">
+                  <number>10</number>
+                 </property>
+                 <property name="placeholderText">
+                  <string/>
                  </property>
                 </widget>
                </item>
@@ -388,8 +400,14 @@ font: 77 10pt &quot;Arial Black&quot;;
                    <pointsize>12</pointsize>
                   </font>
                  </property>
+                 <property name="maxLength">
+                  <number>12</number>
+                 </property>
                  <property name="echoMode">
                   <enum>QLineEdit::Password</enum>
+                 </property>
+                 <property name="placeholderText">
+                  <string/>
                  </property>
                 </widget>
                </item>
@@ -464,8 +482,14 @@ font: 77 10pt &quot;Arial Black&quot;;
                    <pointsize>12</pointsize>
                   </font>
                  </property>
+                 <property name="maxLength">
+                  <number>12</number>
+                 </property>
                  <property name="echoMode">
                   <enum>QLineEdit::Password</enum>
+                 </property>
+                 <property name="placeholderText">
+                  <string/>
                  </property>
                 </widget>
                </item>
@@ -569,8 +593,19 @@ font: 77 10pt &quot;Arial Black&quot;;
                  <height>30</height>
                 </size>
                </property>
+               <property name="styleSheet">
+                <string notr="true">QPushButton:pressed {
+    background-color: rgb(0, 128, 143);
+}
+
+</string>
+               </property>
                <property name="text">
                 <string>VOLVER</string>
+               </property>
+               <property name="icon">
+                <iconset>
+                 <normaloff>../recursos/img/exit-fill.png</normaloff>../recursos/img/exit-fill.png</iconset>
                </property>
               </widget>
              </item>
@@ -595,8 +630,22 @@ font: 77 10pt &quot;Arial Black&quot;;
                  <height>30</height>
                 </size>
                </property>
+               <property name="styleSheet">
+                <string notr="true">QPushButton:pressed {
+    background-color: rgb(0, 128, 143);
+}
+
+</string>
+               </property>
                <property name="text">
                 <string>ACEPTAR</string>
+               </property>
+               <property name="icon">
+                <iconset>
+                 <normaloff>../recursos/img/save.png</normaloff>../recursos/img/save.png</iconset>
+               </property>
+               <property name="default">
+                <bool>true</bool>
                </property>
               </widget>
              </item>

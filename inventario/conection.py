@@ -74,44 +74,62 @@ class DatabaseManager:
             print("Error al obtener producto por ID:", e)
             return None    
 
-    def restar_cantidad_producto(self, ID_P, cantidad_vendida):
+    def restar_cantidad_producto(self, ID_P, cantidades_vendidas):
         try:
-            # Obtener la cantidad disponible del producto
-            self.cursor.execute("SELECT cantidad FROM productos WHERE ID_P = ?", (ID_P,))
-            resultado = self.cursor.fetchone()
-            if resultado is None:
-                print(f"No se encontró ningún producto con el ID {ID_P}.")
-                return
+            # Dividir las IDs y las cantidades vendidas en listas separadas
+            lista_ids = ID_P.split(',')
+            lista_cantidades = cantidades_vendidas.split(',')
     
-            cantidad_disponible = resultado[0]
+            # Iterar sobre las listas de IDs y cantidades vendidas
+            for ID_P, cantidad_vendida in zip(lista_ids, lista_cantidades):
+                # Obtener la cantidad disponible del producto
+                self.cursor.execute("SELECT cantidad FROM productos WHERE ID_P = ?", (ID_P,))
+                resultado = self.cursor.fetchone()
+                if resultado is None:
+                    print(f"No se encontró ningún producto con el ID {ID_P}.")
+                    continue  # Pasar al siguiente producto si no se encuentra el actual
+                
+                cantidad_disponible = resultado[0]
     
-            # Calcular la nueva cantidad después de la venta
-            nueva_cantidad = cantidad_disponible - cantidad_vendida
+                # Calcular la nueva cantidad después de la venta
+                nueva_cantidad = cantidad_disponible - int(cantidad_vendida)
     
-            # Actualizar la cantidad en la tabla de productos
-            self.cursor.execute("UPDATE productos SET cantidad = ? WHERE ID_P = ?", (nueva_cantidad, ID_P))
-            self.connection.commit()
-            print("Cantidad actualizada correctamente.")
+                # Actualizar la cantidad en la tabla de productos
+                self.cursor.execute("UPDATE productos SET cantidad = ? WHERE ID_P = ?", (nueva_cantidad, ID_P))
+                self.connection.commit()
+                print(f"Cantidad del producto con ID {ID_P} actualizada correctamente.")
         except sqlite3.Error as e:
             print("Error al restar cantidad de producto:", e)   
 
-    def insertar_salida(self, ID_P, precio_venta, precio_bs, cantidad_vendida, CEDULA):
-            try:
-                # Obtener la fecha y hora actual
-                fecha_actual = datetime.date.today()
-                hora_actual = datetime.datetime.now().strftime("%H:%M:%S")
-    
-                # Ejecutar la consulta SQL para insertar los datos de la salida
-                self.cursor.execute("INSERT INTO ventas (ID_P, fecha, hora, precio_vent, precio_bs, CEDULA) VALUES (?, ?, ?, ?, ?, ?)",
-                                    (ID_P, fecha_actual, hora_actual, precio_venta, precio_bs, CEDULA))
+    def insertar_salida(self, productos_vendidos, precio_vent, precio_bs):
+        try:
+            # Obtener la fecha y hora actual
+            fecha_actual = datetime.date.today()
+            hora_actual = datetime.datetime.now().strftime("%H:%M:%S")
+
+            # Generar un nuevo ID_V para la venta
+            self.cursor.execute("INSERT INTO ventas (precio_vent, precio_bs, fecha, hora) VALUES (?, ?, ?, ?)",
+                                (precio_vent, precio_bs, fecha_actual, hora_actual))
+            self.connection.commit()  # Confirmar la transacción
+
+            # Obtener el ID_V recién insertado
+            id_venta = self.cursor.lastrowid
+
+            # Iterar sobre los datos de cada producto vendido
+            for producto in productos_vendidos:
+                ID_P, nombre, modelo, marca, cantidad, precio_unitario = producto
+
+                # Restar la cantidad vendida del producto en la base de datos
+                self.restar_cantidad_producto(ID_P, cantidad)
+
+                # Insertar una fila en la tabla de detalles_venta para cada producto vendido
+                self.cursor.execute("INSERT INTO detalles_venta (ID_V, ID_P, nombre, modelo, marca, cantidad, precio_unitario) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                                    (id_venta, ID_P, nombre, modelo, marca, cantidad, precio_unitario))
                 self.connection.commit()  # Confirmar la transacción
-                
-                # Restar la cantidad vendida de la tabla de productos
-                self.restar_cantidad_producto(ID_P, cantidad_vendida)
-                
-                print("Salida de productos registrada correctamente.")
-            except sqlite3.Error as e:
-                print("Error al insertar salida de productos:", e)
+
+            print("Productos vendidos registrados correctamente.")
+        except sqlite3.Error as e:
+            print("Error al insertar salida de productos:", e)
     
     def obtener_ultimo_id_venta(self):
         try:
@@ -212,7 +230,6 @@ class DatabaseManager:
     def usuario_existe(self, username):
         try:
             # Realizar la consulta para verificar si el usuario existe
-            # Suponiendo que tu tabla de usuarios se llama 'user' y el campo de nombre de usuario 'username'
             query = "SELECT COUNT(*) FROM user WHERE username = ?"
             self.cursor.execute(query, (username,))
             resultado = self.cursor.fetchone()[0]
@@ -233,4 +250,29 @@ class DatabaseManager:
             print("Producto actualizado correctamente.")
         except sqlite3.Error as e:
             print("Error al actualizar producto:", e)
-                        
+    
+    def buscar_venta_por_numero(self, ID_V):
+        try:
+             # Generar un nuevo ID_V para la venta
+            self.cursor.execute("SELECT precio_vent, precio_bs, fecha, hora FROM detalles_venta",)
+            self.connection.commit()  # Confirmar la transacción
+            # Ejecutar una consulta para obtener venta
+            self.cursor.execute("SELECT ID_V, ID_P, nombre, modelo, marca, cantidad, precio_unitario FROM detalles_venta")
+            venta = self.cursor.fetchone()
+            return venta
+        except sqlite3.Error as e:
+            print("Error al buscar venta por número:", e)
+            return None
+    
+    def obtener_ultima_venta(self):
+        try:
+            # Generar un nuevo ID_V para la venta
+            self.cursor.execute("SELECT precio_vent, precio_bs, fecha, hora FROM detalles_venta ORDER BY ID_V DESC LIMIT 1",)
+            self.connection.commit()  # Confirmar la transacción
+            # Ejecutar una consulta para obtener la última venta
+            self.cursor.execute("SELECT ID_V, ID_P, nombre, modelo, marca, cantidad, precio_unitario FROM detalles_venta ORDER BY ID_V DESC LIMIT 1")
+            ultima_venta = self.cursor.fetchone()
+            return ultima_venta
+        except sqlite3.Error as e:
+            print("Error al obtener la última venta:", e)
+            return None    

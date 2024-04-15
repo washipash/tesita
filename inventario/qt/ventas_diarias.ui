@@ -265,6 +265,9 @@ border:1px solid rgb(198, 255, 253);
                   <property name="enabled">
                    <bool>true</bool>
                   </property>
+                  <property name="readOnly">
+                   <bool>true</bool>
+                  </property>
                  </widget>
                 </item>
                 <item>
@@ -317,6 +320,9 @@ border:1px solid rgb(198, 255, 253);
                 <item>
                  <widget class="QLineEdit" name="total_bs_line">
                   <property name="enabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="readOnly">
                    <bool>true</bool>
                   </property>
                  </widget>
@@ -376,8 +382,18 @@ border:1px solid rgb(198, 255, 253);
                 <height>30</height>
                </size>
               </property>
+              <property name="styleSheet">
+               <string notr="true">QPushButton:pressed {
+	background-color: rgb(0, 255, 0);
+}
+</string>
+              </property>
               <property name="text">
                <string>EXPORTAR</string>
+              </property>
+              <property name="icon">
+               <iconset>
+                <normaloff>../recursos/img/save.png</normaloff>../recursos/img/save.png</iconset>
               </property>
              </widget>
             </item>
@@ -438,6 +454,10 @@ QPushButton:hover{
 background-color: rgb(255, 85, 0);
 color: rgb(0, 0, 0);
 font: 77 10pt &quot;Arial Black&quot;;
+}
+
+QPushButton:pressed {
+	background-color: rgb(177, 118, 0);
 }
 </string>
               </property>

@@ -186,7 +186,11 @@ font: 77 10pt &quot;Arial Black&quot;;
                </widget>
               </item>
               <item>
-               <widget class="QSpinBox" name="cant"/>
+               <widget class="QSpinBox" name="cant">
+                <property name="maximum">
+                 <number>999</number>
+                </property>
+               </widget>
               </item>
              </layout>
             </item>
@@ -248,14 +252,22 @@ font: 77 10pt &quot;Arial Black&quot;;
           </property>
           <property name="styleSheet">
            <string notr="true">QPushButton:hover{
-background-color: rgb(255, 27, 6);
+background-color: red; 
+
 color: rgb(0, 0, 0);
 font: 77 10pt &quot;Arial Black&quot;;
 }
-</string>
+
+QPushButton:pressed {
+	background-color: rgb(170, 0, 0);
+}</string>
           </property>
           <property name="text">
            <string>SALIR</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../recursos/img/exit-fill.png</normaloff>../recursos/img/exit-fill.png</iconset>
           </property>
          </widget>
         </item>
@@ -279,6 +291,13 @@ font: 77 10pt &quot;Arial Black&quot;;
             <width>120</width>
             <height>30</height>
            </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">QPushButton:pressed {
+    background-color: rgb(0, 128, 143);
+}
+
+</string>
           </property>
           <property name="text">
            <string>ACEPTAR</string>

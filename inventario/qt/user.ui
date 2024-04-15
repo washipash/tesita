@@ -296,6 +296,18 @@ border:1px solid rgb(0, 85, 255);
                <height>30</height>
               </size>
              </property>
+             <property name="styleSheet">
+              <string notr="true">
+QPushButton:hover{
+	background-color: rgb(1, 255, 43);
+color: rgb(0, 0, 0);
+font: 77 10pt &quot;Arial Black&quot;;
+}
+
+QPushButton:pressed {
+	background-color: rgb(0, 170, 0);
+}</string>
+             </property>
              <property name="text">
               <string>Salir</string>
              </property>
@@ -322,8 +334,19 @@ border:1px solid rgb(0, 85, 255);
                <height>30</height>
               </size>
              </property>
+             <property name="styleSheet">
+              <string notr="true">QPushButton:pressed {
+    background-color: rgb(0, 128, 143);
+}
+
+</string>
+             </property>
              <property name="text">
               <string>Editar</string>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>../recursos/img/varita-magica.png</normaloff>../recursos/img/varita-magica.png</iconset>
              </property>
             </widget>
            </item>
@@ -348,8 +371,19 @@ border:1px solid rgb(0, 85, 255);
                <height>30</height>
               </size>
              </property>
+             <property name="styleSheet">
+              <string notr="true">QPushButton:pressed {
+    background-color: rgb(0, 128, 143);
+}
+
+</string>
+             </property>
              <property name="text">
               <string>Agregar</string>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>../recursos/img/agg.png</normaloff>../recursos/img/agg.png</iconset>
              </property>
             </widget>
            </item>
@@ -374,8 +408,23 @@ border:1px solid rgb(0, 85, 255);
                <height>30</height>
               </size>
              </property>
+             <property name="styleSheet">
+              <string notr="true">QPushButton:hover{
+background-color: rgb(255, 27, 6);
+color: rgb(0, 0, 0);
+font: 77 10pt &quot;Arial Black&quot;;
+}
+
+QPushButton:pressed {
+	background-color: rgb(170, 0, 0);
+}</string>
+             </property>
              <property name="text">
               <string>Eliminar</string>
+             </property>
+             <property name="icon">
+              <iconset>
+               <normaloff>../recursos/img/basura.png</normaloff>../recursos/img/basura.png</iconset>
              </property>
             </widget>
            </item>

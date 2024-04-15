@@ -196,7 +196,11 @@ font: 77 10pt &quot;Arial Black&quot;;
                    </widget>
                   </item>
                   <item>
-                   <widget class="QSpinBox" name="cant_spin"/>
+                   <widget class="QSpinBox" name="cant_spin">
+                    <property name="maximum">
+                     <number>999</number>
+                    </property>
+                   </widget>
                   </item>
                  </layout>
                 </item>
@@ -289,17 +293,22 @@ font: 77 10pt &quot;Arial Black&quot;;
            </size>
           </property>
           <property name="styleSheet">
-           <string notr="true">
-
-QPushButton:hover{
-background-color: rgb(255, 85, 0);
+           <string notr="true">QPushButton:hover{
+background-color: orange; 
 color: rgb(0, 0, 0);
 font: 77 10pt &quot;Arial Black&quot;;
 }
-</string>
+
+QPushButton:pressed {
+background-color: rgb(255, 85, 0);
+}</string>
           </property>
           <property name="text">
            <string>SALIR</string>
+          </property>
+          <property name="icon">
+           <iconset>
+            <normaloff>../recursos/img/exit-fill.png</normaloff>../recursos/img/exit-fill.png</iconset>
           </property>
          </widget>
         </item>

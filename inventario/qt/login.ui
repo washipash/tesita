@@ -177,6 +177,11 @@ background-color: rgb(171, 0, 0);
 color: rgb(0, 0, 0);
 font: 77 10pt &quot;Arial Black&quot;;
 }
+
+QPushButton:pressed {
+	background-color: rgb(134, 0, 0);
+}
+
 </string>
           </property>
           <property name="text">
@@ -329,6 +334,12 @@ font: 77 10pt &quot;Arial Black&quot;;
                 <pointsize>12</pointsize>
                </font>
               </property>
+              <property name="layoutDirection">
+               <enum>Qt::RightToLeft</enum>
+              </property>
+              <property name="maxLength">
+               <number>10</number>
+              </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
@@ -401,6 +412,12 @@ font: 77 10pt &quot;Arial Black&quot;;
                 <family>Arial</family>
                 <pointsize>12</pointsize>
                </font>
+              </property>
+              <property name="layoutDirection">
+               <enum>Qt::RightToLeft</enum>
+              </property>
+              <property name="maxLength">
+               <number>12</number>
               </property>
               <property name="echoMode">
                <enum>QLineEdit::Password</enum>
@@ -533,6 +550,13 @@ font: 77 10pt &quot;Arial Black&quot;;
             </property>
             <property name="layoutDirection">
              <enum>Qt::RightToLeft</enum>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">QPushButton:pressed {
+    background-color: rgb(0, 128, 143);
+}
+
+</string>
             </property>
             <property name="text">
              <string>Ingresar</string>

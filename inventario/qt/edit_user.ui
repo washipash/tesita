@@ -504,8 +504,19 @@ border:1px solid rgb(198, 255, 253);
                  <height>30</height>
                 </size>
                </property>
+               <property name="styleSheet">
+                <string notr="true">QPushButton:pressed {
+    background-color: rgb(0, 128, 143);
+}
+
+</string>
+               </property>
                <property name="text">
                 <string>Volver</string>
+               </property>
+               <property name="icon">
+                <iconset>
+                 <normaloff>../recursos/img/exit-fill.png</normaloff>../recursos/img/exit-fill.png</iconset>
                </property>
               </widget>
              </item>
@@ -529,6 +540,13 @@ border:1px solid rgb(198, 255, 253);
                  <width>120</width>
                  <height>30</height>
                 </size>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">QPushButton:pressed {
+    background-color: rgb(0, 128, 143);
+}
+
+</string>
                </property>
                <property name="text">
                 <string>Aceptar</string>
