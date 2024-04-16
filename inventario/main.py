@@ -111,9 +111,7 @@ class Registro(QDialog):
         password = self.pass_user_line.text()
         repetir_contraseña = self.rep_pass_user_line.text()
         tipo = self.tp_u_cbx.currentText()  # Obtener el tipo seleccionado del ComboBox
-        self.db_manager.insertar_usuario(username, nombre, password, repetir_contraseña, tipo)
-        
-        # Verificar si la contraseña tiene al menos 6 caracteres
+                # Verificar si la contraseña tiene al menos 6 caracteres
         if len(password) < 6:
             QMessageBox.warning(self, "Error", "La contraseña debe tener al menos 6 caracteres.")
             return
@@ -130,6 +128,8 @@ class Registro(QDialog):
         if password != repetir_contraseña:
             QMessageBox.warning(self, "Error", "Las contraseñas no coinciden.")
             return
+        
+        self.db_manager.insertar_usuario(username, nombre, password, repetir_contraseña, tipo)
 
         # Emitir la señal de usuario registrado
         self.usuario_registrado.emit()
@@ -235,6 +235,22 @@ class VentanaVentasDiarias(QtWidgets.QDialog):
         self.db_manager = db_manager
         #self.exp_btn.clicked.connect(self.exportar)
         self.close_btn.clicked.connect(self.cerrar)
+        
+    def mostrar_datos_ventas(self):
+        try:
+            # Obtener los datos de la tabla productos de la base de datos
+            ventas = self.db_manager.obtener_ventas()
+    
+            # Limpiar la tabla antes de insertar nuevos datos
+            self.table_ventas_d.setRowCount(0)
+    
+            # Insertar los datos en la tabla table_prod
+            for row_number, row_data in enumerate(ventas):
+                self.table_ventas_d.insertRow(row_number)
+                for column_number, data in enumerate(row_data):
+                    self.table_ventas_d.setItem(row_number, column_number, QtWidgets.QTableWidgetItem(str(data)))
+        except Exception as e:
+            print("Error al obtener ventas:", e)    
               
     def cerrar(self):
         # Cerrar la ventana actual de registro
@@ -278,27 +294,37 @@ class Ventanabuscarventa(QtWidgets.QDialog):
 
         # Mostrar los datos de la venta en la tabla
         self.table_ventas.setRowCount(1)  # Asegurarse de tener solo una fila
-        N_P, modelo_P, marca_P, cant_P, precio_unitario, precio_bs = venta
+        ID_P, modelo, marca, cantidad, precio_unitario, precio_bs, fecha, hora, CI, nombre = venta
 
         # Llenar las celdas de la tabla con los datos de la venta
-        self.table_ventas.setItem(0, 0, QTableWidgetItem(N_P))
-        self.table_ventas.setItem(0, 1, QTableWidgetItem(modelo_P))
-        self.table_ventas.setItem(0, 2, QTableWidgetItem(marca_P))
-        self.table_ventas.setItem(0, 3, QTableWidgetItem(str(cant_P)))
-        self.table_ventas.setItem(0, 4, QTableWidgetItem(str(precio_unitario)))
-        self.table_ventas.setItem(0, 5, QTableWidgetItem(str(precio_bs)))
+        self.table_ventas.setItem(0, 0, QTableWidgetItem(str(ID_P)))
+        self.table_ventas.setItem(0, 1, QTableWidgetItem(nombre))
+        self.table_ventas.setItem(0, 2, QTableWidgetItem(modelo))
+        self.table_ventas.setItem(0, 3, QTableWidgetItem(marca))
+        self.table_ventas.setItem(0, 4, QTableWidgetItem(str(cantidad)))
+        self.table_ventas.setItem(0, 5, QTableWidgetItem(str(precio_unitario)))
+        self.table_ventas.setItem(0, 6, QTableWidgetItem(str(precio_bs)))
+
+        # Actualizar los campos de fecha y hora
+        self.fecha_label.setText(str(fecha))
+        self.hora_label.setText(str(hora))
 
         # Actualizar los campos de total_v y total_bs
         self.total_v.setText(str(precio_unitario))
-        self.total_bs.setText(str(precio_bs))    
+        self.total_bs.setText(str(precio_bs))
+
+        # Actualizar los campos de ci y name
+        self.ci_line.setText(str(CI))
+        self.name_line.setText(nombre)    
 
 
 class ventanaeditarproducto(QtWidgets.QDialog):
-    def __init__(self, db_manager, nombre, modelo, marca, cantidad, precio_unitario, actualizar_callback):
+    def __init__(self, ID_P, db_manager, nombre, modelo, marca, cantidad, precio_unitario, actualizar_callback):
         super(ventanaeditarproducto, self).__init__()
         loadUi(r"qt\actualizar_prod.ui", self)         
         self.db_manager = db_manager 
         self.nombre = nombre
+        self.ID_P = ID_P
         self.modelo = modelo
         self.marca = marca
         self.cantidad = cantidad
@@ -306,9 +332,10 @@ class ventanaeditarproducto(QtWidgets.QDialog):
         self.actualizar_callback = actualizar_callback
 
         # Rellenar los campos con los datos del producto
+        self.ID_line.setText(str(ID_P))
         self.name_line.setText(nombre)
-        self.modelo_line.setText(modelo)
-        self.marca_line.setText(marca)
+        self.modelo_line.setText(marca)
+        self.marca_line.setText(modelo)
         self.cant.setValue(int(cantidad))
         self.precio_line.setText(precio_unitario)
 
@@ -328,9 +355,9 @@ class ventanaeditarproducto(QtWidgets.QDialog):
         nueva_cantidad = self.cant.value()
         nuevo_precio = self.precio_line.text()
 
-        # Actualizar el producto en la base de datos
-        self.db_manager.actualizar_producto(self.nombre, nuevo_nombre, nueva_marca, nuevo_modelo, nueva_cantidad, nuevo_precio)
-
+        # Actualizar el producto en la base de datos       
+        self.db_manager.actualizar_producto(self.ID_P , nuevo_nombre, nuevo_modelo, nueva_marca, nueva_cantidad, nuevo_precio)
+        
         # Cerrar la ventana de edición
         self.close()
         # Llamar al callback para actualizar la tabla
@@ -345,7 +372,30 @@ class eliminarventa(QtWidgets.QDialog):
 
     def cerrar(self):
         # Cerrar la ventana actual de registro
-        self.close()         
+        self.close()    
+        
+class Ventanacliente(QtWidgets.QDialog):
+    def __init__(self, db_manager):
+        super(Ventanacliente, self).__init__()
+        loadUi(r"qt\agregar_cliente.ui", self)  
+        self.db_manager = db_manager 
+        self.close_btn.clicked.connect(self.cerrar)
+        self.done_btn.clicked.connect(self.agregar)
+
+        
+    def agregar(self):
+        CI = self.ci_line.text()
+        nombre = self.name.text()
+        telefono = self.tel.text()
+        
+        if self.db_manager.agregar_cliente(CI, nombre, telefono):
+            print("Cliente registrado exitosamente.")
+        else:
+            print("Error al registrar cliente.")
+
+    def cerrar(self):
+        # Cerrar la ventana actual de registro
+        self.close()               
 
 class VentanaPrincipal(QtWidgets.QMainWindow):
     usuario_registrado = pyqtSignal()
@@ -365,6 +415,7 @@ class VentanaPrincipal(QtWidgets.QMainWindow):
         self.timer.timeout.connect(self.actualizar_hora_fecha)
         self.timer.start(1000)
         self.user_btn.clicked.connect(self.abrir_usuario)
+        self.clientes_btn.clicked.connect(self.abrir_clientes)
         self.add_btn.clicked.connect(self.abrir_ventana_anadir_producto)      
         self.inicio_btn.clicked.connect(self.mostrarPaginaInicio)
         self.Productos_btn.clicked.connect(self.mostrarPaginaProductos)
@@ -650,6 +701,7 @@ class VentanaPrincipal(QtWidgets.QMainWindow):
             QtWidgets.QMessageBox.warning(self, "Advertencia", "Producto no encontrado.")
 
     def guardar_salida(self):
+        CI = self.ci_line.text()
         num_filas = self.table_prod_comprados.rowCount()
 
         # Verificar si hay datos en el QTableWidget
@@ -669,8 +721,8 @@ class VentanaPrincipal(QtWidgets.QMainWindow):
             cantidad = self.table_prod_comprados.item(fila, 4).text()
             precio_unitario = self.table_prod_comprados.item(fila, 5).text()
 
-            # Agregar el producto vendido a la lista
-            productos_vendidos.append((ID_P, nombre, modelo, marca, cantidad, precio_unitario))
+           # Agregar el producto vendido a la lista
+            productos_vendidos.append((ID_P, nombre, modelo, marca, cantidad, precio_unitario, CI))
 
         # Obtener el precio de venta de total_v_line
         precio_venta_text = self.total_v_line.text()
@@ -753,6 +805,9 @@ class VentanaPrincipal(QtWidgets.QMainWindow):
 
         # Verificar si se ha seleccionado una fila
         if selected_row >= 0:
+            # Obtener el ID del producto seleccionado
+            ID_P = int(self.table_prod.item(selected_row, 0).text())  # Suponiendo que el ID del producto está en la primera columna
+
             # Obtener los detalles del producto seleccionado
             nombre = self.table_prod.item(selected_row, 1).text()
             modelo = self.table_prod.item(selected_row, 2).text()
@@ -761,7 +816,7 @@ class VentanaPrincipal(QtWidgets.QMainWindow):
             precio_unitario = self.table_prod.item(selected_row, 5).text()
 
             # Inicializar la ventana de edición de producto con los detalles del producto seleccionado
-            ventana_editar_producto = ventanaeditarproducto(self.db_manager, nombre, modelo, marca, cantidad, precio_unitario, self.actualizar_datos_tabla)
+            ventana_editar_producto = ventanaeditarproducto(ID_P, self.db_manager, nombre, modelo, marca, cantidad, precio_unitario, self.actualizar_datos_tabla)
             ventana_editar_producto.exec_()
         else:
             # Mostrar un mensaje de advertencia si no se seleccionó ninguna fila
@@ -779,6 +834,10 @@ class VentanaPrincipal(QtWidgets.QMainWindow):
     def abrir_eliminar_venta(self):
         eliminar_venta = eliminarventa(self.db_manager)
         eliminar_venta.exec_()
+    
+    def abrir_clientes(self):
+        ventana_cliente = Ventanacliente(self.db_manager)
+        ventana_cliente.exec_()    
    
     
     def salida(self):
